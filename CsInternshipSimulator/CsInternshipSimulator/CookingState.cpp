@@ -29,6 +29,7 @@ void CookingState::update(GLFWwindow* window, float dt)
     
             // zapamti prethodnu poziciju
             float prevY = pattyY;
+            float prevX = pattyX;
 
             // WASD movement
             if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) pattyY += pattySpeed;
@@ -41,6 +42,10 @@ void CookingState::update(GLFWwindow* window, float dt)
             float pRight = pattyX + pattyHalfWidth;
            float pTop = pattyY + pattyHalfHeight;
             float pBottom = pattyY - pattyHalfHeight;
+
+            if (pattyX > 0.8)pattyX = prevX;
+            if (pattyX < -0.8)pattyX = prevX;
+
 
             bool intersectsStove = pBottom <= stoveTop;
             // ako eli preciznije: uz X granice poreta

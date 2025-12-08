@@ -35,13 +35,10 @@ AssembleState::AssembleState(GameContext& ctx, StateManager& manager)
 
     initIngredients();
 
-    for (int i = 0; i < ctx.NUM_INGREDIENTS; ++i) {
-                        gIngredients[i].placed = false;
-                        gIngredients[i].active = false;
-                    }
 
-                    gCurrentIngredient = 0;
-                    gIngredients[gCurrentIngredient].active = true;
+
+    gCurrentIngredient = 0;
+    gIngredients[gCurrentIngredient].active = true;
 }
 
 void AssembleState::update(GLFWwindow* window, float /*dt*/)
@@ -54,7 +51,7 @@ void AssembleState::render()
 {
     glUseProgram(ctx.rectShader);
 
-    // 1) background (table)
+    // 1) background 
     glBindVertexArray(ctx.VAOrect);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, tableBackgroundTexture);
@@ -66,8 +63,7 @@ void AssembleState::render()
 
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
-    // 2) ingredients (all placed + current active)
- // reuse patty quad for all ingredients
+    // 2) ingredients aktivni i vec stavljni
 
     for (int i = 0; i < ctx.NUM_INGREDIENTS; ++i) {
         glBindVertexArray(ctx.VAOpatty);
@@ -101,10 +97,14 @@ void AssembleState::render()
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     }
 
-    glBindVertexArray(ctx.VAOpatty); // isti quad koristimo za sve
+    //puddles
+    glBindVertexArray(ctx.VAOpatty); 
     for (int i = 0; i < gPuddleCount; ++i) {
+
         const Puddle& p = gPuddles[i];
+
         if (!p.active)continue;
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, p.texture);
 
@@ -116,6 +116,7 @@ void AssembleState::render()
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     }
 
+    //ako je kraj
     if (gCurrentIngredient >= ctx.NUM_INGREDIENTS) {
 
                 glBindVertexArray(ctx.VAOpatty); 

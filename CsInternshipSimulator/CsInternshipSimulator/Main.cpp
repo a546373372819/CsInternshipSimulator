@@ -336,6 +336,10 @@ int main() {
     glDeleteBuffers(1, &VBOrect);
     glDeleteVertexArrays(1, &VAOpatty);
     glDeleteBuffers(1, &VBOpatty);
+    glDeleteVertexArrays(1, &VAObar);
+    glDeleteBuffers(1, &VBObar);
+    glDeleteVertexArrays(1, &VAOpic);
+    glDeleteBuffers(1, &VBOpic);
 
     glfwDestroyWindow(window);
     glfwTerminate();
