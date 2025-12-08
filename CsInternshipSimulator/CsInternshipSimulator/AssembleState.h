@@ -1,4 +1,3 @@
-// AssemblingState.h
 #pragma once
 #include "GameState.h"
 #include "Ingredient.h"
@@ -6,7 +5,6 @@
 
 
 
-// forward declare Ingredient / Puddle if they are in another header
 struct Ingredient;
 struct Puddle;
 
@@ -22,12 +20,11 @@ public:
 
      void updateAssembling(GLFWwindow* window);
      void updatePuddles();
-     void renderAssembling();
      void initIngredients();
      void spawnPuddleFor(const Ingredient& ing);
 
 
-     // textures – you already have patty, we’ll add the rest
+     // textures 
      unsigned int pattyCookedTexture = 0;
      unsigned int bottomBunTex = 0;
      unsigned int ketchupTex = 0;
@@ -46,29 +43,24 @@ public:
      unsigned int prijatnoTex = 0;
 
 
-     // brzina padanja
      float puddleFallSpeed = 0.02f;
 
-     // Y koordinata površine stola (podesi da legne na tvoju sliku)
      float tableSurfaceY = -0.55f;
 
      float puddleHalfW = 0.25f;
      float puddleHalfH = 0.08f;
 
-     // plate / stack area (NDC)
      float plateLeft = -0.3f;
      float plateRight = 0.3f;
      float plateTop = -0.24f;
      float plateBottom = -0.24f;
 
-     // table bounds in NDC (adjust to your table texture)
      float tableLeft = -0.9f;
      float tableRight = 0.9f;
-     float tableTop = -0.4f;   // gornja ivica stola
-     float tableBottom = -0.45f;   // donja ivica stola
+     float tableTop = -0.4f;  
+     float tableBottom = -0.45f;   
 
 
-     // all ingredients same size for now
      float ingredientHalfWidth = 0.25f;
      float ingredientHalfHeight = 0.08f;
      float ingredientSpeed = 0.02f;

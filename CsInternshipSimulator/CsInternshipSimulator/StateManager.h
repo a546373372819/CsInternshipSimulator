@@ -1,4 +1,3 @@
-// StateManager.h
 #pragma once
 #include <memory>
 #include "GameState.h"

@@ -1,6 +1,6 @@
 // GameState.h
 #pragma once
-#include <GL/glew.h>        // MUST be first
+#include <GL/glew.h>        
 #include <GLFW/glfw3.h>
 
 struct GameContext;

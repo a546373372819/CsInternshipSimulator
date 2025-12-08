@@ -1,4 +1,3 @@
-// StateManager.cpp
 #include "StateManager.h"
 #include "MenuState.h"
 #include "CookingState.h"

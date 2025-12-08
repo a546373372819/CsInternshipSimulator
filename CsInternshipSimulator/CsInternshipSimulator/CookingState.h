@@ -1,4 +1,3 @@
-// CookingState.h
 #pragma once
 #include "GameState.h"
 
@@ -29,14 +28,13 @@ public:
     float pattySpeed = 0.02f;
 
 
-    // pozicija loading bara u NDC
+    // pozicija loading bara 
     float barLeft = -0.8f;
     float barRight = 0.8f;
     float barTop = 0.9f;
     float barBottom = 0.85f;
 
 
-    // stove AABB in NDC – TWEAK to match your cooking background stove
     float stoveLeft = -1.0f;
     float stoveRight = 1.0f;
     float stoveTop = -0.15f;

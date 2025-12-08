@@ -70,8 +70,9 @@ void AssembleState::render()
         const Ingredient& ing = gIngredients[i];
 
         if (!ing.placed && !ing.active)
-            continue; // not yet spawned or forgotten
+            continue;
 
+        //ako su flase
         if (ing.type == IngredientType::Ketchup ||
             ing.type == IngredientType::Mustard) {
 
@@ -86,9 +87,6 @@ void AssembleState::render()
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, ing.texture);
-
-
-
 
         glUniform1f(glGetUniformLocation(ctx.rectShader, "uCookProgress"), 0);
         glUniform1f(glGetUniformLocation(ctx.rectShader, "uX"), ing.x);
@@ -135,25 +133,15 @@ void AssembleState::render()
 
 void AssembleState::initIngredients()
 {
-    // bottom bun
     gIngredients[0] = { IngredientType::BottomBun, 0.0f, 0.8f, false, false, bottomBunTex };
-    // patty
     gIngredients[1] = { IngredientType::Patty, 0.0f, 0.8f, false, false, pattyCookedTexture };
-    // ketchup
     gIngredients[2] = { IngredientType::Ketchup, -0.6f, 0.8f, false, false, ketchupBottleTex };
-    // mustard
     gIngredients[3] = { IngredientType::Mustard, -0.2f, 0.8f, false, false, mustardBottleTex };
-    // pickles
     gIngredients[4] = { IngredientType::Pickles, 0.2f, 0.8f, false, false, picklesTex };
-    // onion
     gIngredients[5] = { IngredientType::Onion, 0.6f, 0.8f, false, false, onionTex };
-    // lettuce
     gIngredients[6] = { IngredientType::Lettuce, -0.6f, 0.6f, false, false, lettuceTex };
-    // cheese
     gIngredients[7] = { IngredientType::Cheese, -0.2f, 0.6f, false, false, cheeseTex };
-    // tomato
     gIngredients[8] = { IngredientType::Tomato, 0.2f, 0.6f, false, false, tomatoTex };
-    // top bun
     gIngredients[9] = { IngredientType::TopBun, 0.6f, 0.6f, false, false, topBunTex };
 
 
@@ -164,8 +152,8 @@ void AssembleState::spawnPuddleFor(const Ingredient& ing) {
 
     Puddle& p = gPuddles[gPuddleCount++];
     p.x = ing.x;
-    // kree malo ispod flaice
-    p.y = ing.y - 0.1; // ako nema collHalfH, koristi halfH
+    // malo ispod flasice
+    p.y = ing.y - 0.1; 
 
     p.halfW = puddleHalfW;
     p.halfH = puddleHalfH;
@@ -194,11 +182,9 @@ void AssembleState::updateAssembling(GLFWwindow* window)
     float halfW = ingredientHalfWidth;
     float halfH = ingredientHalfHeight;
 
-    // 1) Zapamti prethodnu poziciju
     float prevX = ing.x;
     float prevY = ing.y;
 
-    // 2) Predlozi novu poziciju na osnovu WASD
     float newX = ing.x;
     float newY = ing.y;
 
@@ -211,7 +197,7 @@ void AssembleState::updateAssembling(GLFWwindow* window)
 
 
 
-    // 3) Invisible walls – clamp kretanje na sto
+    // bounds
     if (newX - halfW < tableLeft)   newX = tableLeft + halfW;
     if (newX + halfW > tableRight)  newX = tableRight - halfW;
     if (newY - halfH <= tableTop)    newY = tableTop + halfH;
@@ -221,45 +207,37 @@ void AssembleState::updateAssembling(GLFWwindow* window)
     ing.y = newY;
 
     if (isLiquidSource) {
-        // edge-detect SPACE, da ne puca deset puta u jednom dranju
+        // edge-detect SPACE
         static bool spaceWasDown = false;
         int spaceState = glfwGetKey(window, GLFW_KEY_SPACE);
 
         if (spaceState == GLFW_PRESS && !spaceWasDown) {
-            // kreiraj puddle
             spawnPuddleFor(ing);
-
-            // ova flaica je "potroena"
-
 
         }
 
         spaceWasDown = (spaceState == GLFW_PRESS);
 
-        // veoma bitno: za ketchup/mustard NE radimo jo nita dalje
         return;
     }
 
-    // 4) Raunamo donje ivice pre i posle pomeranja
     float prevBottom = prevY - halfH;
     float currBottom = ing.y - halfH;
 
-    // Ako se nismo pomerali nadole, nema "sputanja"
     bool movingDown = (currBottom < prevBottom);
 
+    //da li ide dole
     if (!movingDown)
         return;
 
-    // 5) Tražimo NAJVIU podlogu ispod sastojka koju smo upravo dodirnuli
     bool  foundSupport = false;
 
-    // Helper lambda za proveru kandidata
+    // helper 
     auto trySupport = [&](float left, float right, float top) {
-        //// mora horizontalno da pokriva centar sastojka
         float cx = ing.x;
         bool horizontalOverlap = (cx >= left && cx <= right);
 
-        //// uslov: ranije je donja ivica bila iznad, sada je ispod ili na topu
+        // ne moze ispod da se stavi
         bool crossedFromAbove = (prevBottom > top && currBottom <= top);
 
         if (horizontalOverlap && crossedFromAbove) {
@@ -269,28 +247,25 @@ void AssembleState::updateAssembling(GLFWwindow* window)
 
 
 
-    // 5a) Tanjir kao potencijalna podloga
+    // tanjir 
     trySupport(plateLeft, plateRight, plateTop);
 
-    // 5b) Svaki ve postavljen ingredient kao podloga
+    //  ingredient 
     for (int i = 0; i < ctx.NUM_INGREDIENTS; ++i) {
         const Ingredient& base = gIngredients[i];
         if (!base.placed) continue;
 
         float left = base.x - halfW * 0.6;
         float right = base.x + halfW * 0.6;
-        float top = base.y - halfH * 0.5;  // gornja ivica tog sastojka
+        float top = base.y - halfH * 0.5;  
 
         trySupport(left, right, top);
     }
 
-    // 6) Ako smo nali podlogu koju smo upravo dotakli – "spusti" sastojak
     if (foundSupport) {
-        // donja ivica sastojka tano na podlozi
         ing.placed = true;
         ing.active = false;
 
-        // Aktiviraj sledei ingredient
         gCurrentIngredient++;
         if (gCurrentIngredient < ctx.NUM_INGREDIENTS) {
             gIngredients[gCurrentIngredient].active = true;
@@ -301,7 +276,6 @@ void AssembleState::updateAssembling(GLFWwindow* window)
             PlaySound(TEXT("sound/fairy-dust.wav"), NULL, SND_FILENAME | SND_ASYNC);
 
             std::cout << "Burger assembled!\n";
-            // ovde kasnije: PRIJATNO state, ESC exit itd.
         }
     }
 }
@@ -320,17 +294,14 @@ void AssembleState::updatePuddles()
         float prevBottom = prevY - p.halfH;
         float currBottom = newY - p.halfH;
 
-        // traimo NAJBLIU povrinu ispod, koju smo upravo presekli
         float bestTop = -2.0f;
         bool foundSupport = false;
 
         float cx = p.x;
 
         auto trySupport = [&](float left, float right, float top) {
-            //// mora horizontalno da pokriva centar sastojka
             bool horizontalOverlap = (cx >= left && cx <= right);
 
-            //// uslov: ranije je donja ivica bila iznad, sada je ispod ili na topu
             bool crossedFromAbove = (prevBottom > top && currBottom <= top);
 
             if (horizontalOverlap && crossedFromAbove) {
@@ -338,16 +309,16 @@ void AssembleState::updatePuddles()
             }
         };
 
-        // 1) povrina stola
+        //  povrina stola
         trySupport(tableLeft, tableRight, tableSurfaceY);
 
-        // 2) tanjir
+        //  tanjir
         if (!foundSupport) {
             trySupport(plateLeft, plateRight, plateTop);
             if (foundSupport) placed = true;
         }
 
-        // 5b) Svaki ve postavljen ingredient kao podloga
+        //  ingredient
         if (!foundSupport) {
             for (int i = 0; i < ctx.NUM_INGREDIENTS; ++i) {
                 const Ingredient& base = gIngredients[i];
@@ -355,7 +326,7 @@ void AssembleState::updatePuddles()
 
                 float left = base.x - ingredientHalfWidth * 0.6;
                 float right = base.x + ingredientHalfWidth * 0.6;
-                float top = base.y - ingredientHalfHeight * 0.5;  // gornja ivica tog sastojka
+                float top = base.y - ingredientHalfHeight * 0.5;  
 
                 trySupport(left, right, top);
             }
@@ -364,8 +335,9 @@ void AssembleState::updatePuddles()
 
         if (foundSupport) {
 
-            p.falling = false; // ostaje tu
+            p.falling = false; 
 
+            //umesto flase koja leti se stavlja tekstura lokve gde je pala
             if (placed) {
                 if (!gIngredients[2].placed) {
                     std::cout << "a";
@@ -384,13 +356,10 @@ void AssembleState::updatePuddles()
                 gIngredients[gCurrentIngredient].active = true;
                 p.active = false;
 
-
             }
-
 
         }
         else {
-            // nema sudara – nastavlja da pada
             p.y = newY;
         }
     }

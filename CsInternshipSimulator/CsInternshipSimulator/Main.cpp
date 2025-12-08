@@ -41,7 +41,7 @@ unsigned int barShader = 0;
 unsigned int VAObar = 0;
 unsigned int VBObar = 0;
 
-// button bounds in NDC
+// button bounds 
 float btnLeft = 0.0f;
 float btnRight = 0.0f;
 float btnTop = 0.0f;
@@ -54,7 +54,6 @@ float pattyHalfWidth = 0.07f;
 float pattyHalfHeight = 0.07f;
 
 // pic data
-
 float picHalfWidth = 0.05f;
 float picHalfHeight = 0.1f;
 
@@ -83,6 +82,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 // -------------------------------------------------------
 
 void initRectGeometry() {
+
     // Fullscreen background quad + centered button quad in one VBO
 
     float bgLeft = -1.0f;
@@ -90,7 +90,7 @@ void initRectGeometry() {
     float bgTop = 1.0f;
     float bgBottom = -1.0f;
 
-    float btnWidth = 0.4f; // tweak
+    float btnWidth = 0.4f; 
     float btnHeight = 0.4f;
 
     btnLeft = -btnWidth / 2.0f;
@@ -99,13 +99,11 @@ void initRectGeometry() {
     btnTop = btnHeight / 2.0f;
 
     float verticesRect[] = {
-        // background (0..3)
         bgLeft,  bgTop,    0.0f, 1.0f,
         bgLeft,  bgBottom, 0.0f, 0.0f,
         bgRight, bgBottom, 1.0f, 0.0f,
         bgRight, bgTop,    1.0f, 1.0f,
 
-        // button (4..7)
         btnLeft,  btnTop,    0.0f, 1.0f,
         btnLeft,  btnBottom, 0.0f, 0.0f,
         btnRight, btnBottom, 1.0f, 0.0f,
@@ -119,11 +117,9 @@ void initRectGeometry() {
     glBindBuffer(GL_ARRAY_BUFFER, VBOrect);
     glBufferData(GL_ARRAY_BUFFER, sizeof(verticesRect), verticesRect, GL_STATIC_DRAW);
 
-    // pos (location = 0)
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    // tex (location = 1)
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
@@ -132,7 +128,6 @@ void initRectGeometry() {
 
 void initPattyGeometry() {
     float verticesPatty[] = {
-        // x, y,      u, v
         -pattyHalfWidth,  pattyHalfHeight,  0.0f, 1.0f,
         -pattyHalfWidth, -pattyHalfHeight,  0.0f, 0.0f,
          pattyHalfWidth, -pattyHalfHeight,  1.0f, 0.0f,
@@ -146,11 +141,9 @@ void initPattyGeometry() {
     glBindBuffer(GL_ARRAY_BUFFER, VBOpatty);
     glBufferData(GL_ARRAY_BUFFER, sizeof(verticesPatty), verticesPatty, GL_STATIC_DRAW);
 
-    // pos
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    // tex
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
@@ -158,13 +151,12 @@ void initPattyGeometry() {
 }
 
 void initBarGeometry() {
-    // U lokalnim koordinatama [0,1] x [0,1]:
-    // (0,1) (0,0) (1,0) (1,1)
+
     float verticesBar[] = {
-        0.0f, 1.0f,  // gornje levo
-        0.0f, 0.0f,  // donje levo
-        1.0f, 0.0f,  // donje desno
-        1.0f, 1.0f   // gornje desno
+        0.0f, 1.0f,  
+        0.0f, 0.0f,  
+        1.0f, 0.0f,  
+        1.0f, 1.0f   
     };
 
     glGenVertexArrays(1, &VAObar);
@@ -174,7 +166,6 @@ void initBarGeometry() {
     glBindBuffer(GL_ARRAY_BUFFER, VBObar);
     glBufferData(GL_ARRAY_BUFFER, sizeof(verticesBar), verticesBar, GL_STATIC_DRAW);
 
-    // samo pozicija, bez texcoord-a
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
@@ -182,8 +173,7 @@ void initBarGeometry() {
 }
 
 void initPictureGeometry() {
-    // U lokalnim koordinatama [0,1] x [0,1]:
-    // (0,1) (0,0) (1,0) (1,1)
+    
     float verticesPicture[] = {
        -picHalfWidth,  picHalfHeight,  0.0f, 1.0f,
         -picHalfWidth, -picHalfHeight,  0.0f, 0.0f,
@@ -198,11 +188,9 @@ void initPictureGeometry() {
     glBindBuffer(GL_ARRAY_BUFFER, VBOpic);
     glBufferData(GL_ARRAY_BUFFER, sizeof(verticesPicture), verticesPicture, GL_STATIC_DRAW);
 
-    // pos
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    // tex
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
@@ -210,10 +198,6 @@ void initPictureGeometry() {
 }
 
 
-
-// -------------------------------------------------------
-// main
-// -------------------------------------------------------
 
 int main() {
     if (!glfwInit())
@@ -257,6 +241,7 @@ int main() {
     glUniform1i(glGetUniformLocation(rectShader, "uTex0"), 0);
     glUniform1i(glGetUniformLocation(rectShader, "uTex1"), 1);
 
+    //tex
     preprocessTexture(indexTex, "text/index.png");
 
 
@@ -267,11 +252,12 @@ int main() {
     initPictureGeometry();
 
 
-
+    //fps
     const double TARGET_FPS = 75.0;
     const double TARGET_FRAME_TIME = 1.0 / TARGET_FPS;
     double lastTime = glfwGetTime();
 
+    //game context set
     GameContext ctx;
     StateManager manager(ctx);
 
@@ -303,6 +289,8 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
         manager.render();
 
+
+        //drawing index
         glUseProgram(rectShader);
         glBindVertexArray(VAOpatty); 
 
@@ -318,8 +306,6 @@ int main() {
 
         glfwSwapBuffers(window);
         glfwPollEvents();
-
-
 
         // frame limiter
         double frameEnd = glfwGetTime();

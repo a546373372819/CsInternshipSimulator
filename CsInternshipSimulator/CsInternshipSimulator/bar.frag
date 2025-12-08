@@ -2,7 +2,7 @@
 
 out vec4 FragColor;
 
-uniform vec4 uColor;   // RGBA boja bara
+uniform vec4 uColor;   
 
 void main()
 {

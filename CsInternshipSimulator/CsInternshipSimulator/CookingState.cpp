@@ -37,29 +37,29 @@ void CookingState::update(GLFWwindow* window, float dt)
             if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) pattyX -= pattySpeed;
             if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) pattyX += pattySpeed;
 
-            // AABB for patty
+            //  patty limits
             float pLeft = pattyX - pattyHalfWidth;
             float pRight = pattyX + pattyHalfWidth;
            float pTop = pattyY + pattyHalfHeight;
             float pBottom = pattyY - pattyHalfHeight;
 
+            //left right bounds
             if (pattyX > 0.8)pattyX = prevX;
             if (pattyX < -0.8)pattyX = prevX;
 
 
             bool intersectsStove = pBottom <= stoveTop;
-            // ako eli preciznije: uz X granice poreta
-            // intersectsStove &= (pRight >= stoveLeft && pLeft <= stoveRight);
 
             if (intersectsStove) {
-                // samo ako si se kretao NADOLE (prevY > pattyY) – znai udario odozgo
+
+                //if going down bounds
                 if (prevY > pattyY) {
-                    // "nasloni" donju ivicu na stoveTop
                     pattyY = stoveTop + pattyHalfHeight;
                     pBottom = stoveTop;
                 }
 
-                cookProgress += 0.004f; // ovde posle stavi neku vrednost > 0
+                cookProgress += 0.004f; 
+
                 if (cookProgress >= 1.0f) {
                     cookProgress = 1.0f;
                     isCooked = true;
@@ -67,8 +67,6 @@ void CookingState::update(GLFWwindow* window, float dt)
                     PlaySound(NULL, 0, 0);
                     PlaySound(TEXT("sound/restaurant.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
                     manager.changeState(StateID::Assembling);
-
-
                 }
             }
         
@@ -118,7 +116,7 @@ void CookingState::render() {
 
 
 
-    // 3) loading bar (background + fill)
+    //  loading bar 
     glUseProgram(ctx.barShader);
     glBindVertexArray(ctx.VAObar);
 
@@ -128,12 +126,12 @@ void CookingState::render() {
     glUniform1f(glGetUniformLocation(ctx.barShader, "uTop"), barTop);
     glUniform1f(glGetUniformLocation(ctx.barShader, "uBottom"), barBottom);
 
-    // 3a) sivi "prazan" bar u pozadini (uvek pun)
+    //  sivi prazan bar 
     glUniform1f(glGetUniformLocation(ctx.barShader, "uFill"), 1.0f);
     glUniform4f(glGetUniformLocation(ctx.barShader, "uColor"), 0.1f, 0.1f, 0.1f, 0.7f);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
-    // 3b) zeleni "napunjen" deo, sirina = cookProgress
+    //zeleni deo
     float t = cookProgress;
     if (t < 0.0f) t = 0.0f;
     if (t > 1.0f) t = 1.0f;

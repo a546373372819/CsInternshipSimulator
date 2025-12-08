@@ -1,4 +1,3 @@
-// MenuState.cpp
 #include "Util.h"
 #include "MenuState.h"
 #include "StateManager.h"

@@ -1,11 +1,10 @@
-// MenuState.h
 #pragma once
 #include "GameState.h"
 
 class MenuState : public GameState
 {
 public:
-    float btnWidth = 0.4f; // tweak
+    float btnWidth = 0.4f; 
     float btnHeight = 0.4f;
 
 
