@@ -1,0 +1,29 @@
+﻿  AssebleState.cpp
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.22000.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\packages\glfw.3.4.0\build\native\include\GLFW\glfw3.h(123,1): message : see previous definition of 'APIENTRY'
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssebleState.cpp(127,76): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssebleState.cpp(156,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssebleState.cpp(258,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssebleState.cpp(259,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssebleState.cpp(260,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssebleState.cpp(327,28): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssebleState.cpp(328,29): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssebleState.cpp(329,27): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  CookingState.cpp
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.22000.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\packages\glfw.3.4.0\build\native\include\GLFW\glfw3.h(123,1): message : see previous definition of 'APIENTRY'
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\CookingState.cpp(96,64): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\CookingState.cpp(97,64): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+  Main.cpp
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\Main.cpp(288,31): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\Main.cpp(301,64): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\Main.cpp(302,63): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+  MenuState.cpp
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.22000.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\packages\glfw.3.4.0\build\native\include\GLFW\glfw3.h(123,1): message : see previous definition of 'APIENTRY'
+  StateManager.cpp
+  Util.cpp
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\Util.cpp(1,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  Generating Code...
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\Util.cpp(156): warning C4715: 'loadImageToCursor': not all control paths return a value
+  CsInternshipSimulator.vcxproj -> C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\x64\Debug\CsInternshipSimulator.exe
