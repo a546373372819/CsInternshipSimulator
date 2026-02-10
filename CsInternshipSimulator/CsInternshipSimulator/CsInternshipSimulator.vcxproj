@@ -133,6 +133,8 @@
     <None Include="packages.config" />
     <None Include="rect.frag" />
     <None Include="rect.vert" />
+    <None Include="scene3d.frag" />
+    <None Include="scene3d.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssembleState.h" />
