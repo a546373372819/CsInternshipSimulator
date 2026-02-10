@@ -22,6 +22,12 @@
     <None Include="rect.vert">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="scene3d.vert">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="scene3d.frag">
+      <Filter>Source Files</Filter>
+    </None>
     <None Include="bar.vert">
       <Filter>Source Files</Filter>
     </None>
