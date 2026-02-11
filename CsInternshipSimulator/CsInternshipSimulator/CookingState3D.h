@@ -69,4 +69,3 @@ private:
     glm::mat4 makeModelMatrix(const glm::vec3& pos, const glm::vec3& scale) const;
     void clampPattyToTable(); // invisible walls in XZ
 };
-#pragma once
