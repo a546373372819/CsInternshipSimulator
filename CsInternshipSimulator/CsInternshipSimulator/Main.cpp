@@ -65,6 +65,13 @@ int endProgram(const char* message) {
     return -1;
 }
 
+static void printCWD()
+{
+    char buf[MAX_PATH];
+    GetCurrentDirectoryA(MAX_PATH, buf);
+    std::cout << "CWD = " << buf << "\n";
+}
+
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     (void)scancode;
@@ -200,6 +207,7 @@ void initPictureGeometry() {
 
 
 int main() {
+    printCWD();
     if (!glfwInit())
         return endProgram("GLFW nije uspeo da se inicijalizuje.");
 
@@ -303,6 +311,8 @@ int main() {
         glUniform1f(glGetUniformLocation(rectShader, "uS"), 2.0f);
 
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+
+
 
         glfwSwapBuffers(window);
         glfwPollEvents();

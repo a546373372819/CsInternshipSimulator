@@ -28,6 +28,12 @@
     <None Include="bar.frag">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="mesh3d.vert">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="mesh3d.frag">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Util.h">
@@ -60,6 +66,18 @@
     <ClInclude Include="Puddle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mesh.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="model.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="shader.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CookingState3D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -78,6 +96,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CookingState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CookingState3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

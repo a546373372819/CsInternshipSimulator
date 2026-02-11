@@ -1,6 +1,7 @@
 #include "StateManager.h"
 #include "MenuState.h"
 #include "CookingState.h"
+#include "CookingState3D.h"
 #include "AssembleState.h"
 #include <iostream>
 
@@ -23,7 +24,7 @@ void StateManager::changeState(StateID id)
         break;
     case StateID::Cooking:
         std::cout << "Changed";
-        current = std::make_unique<CookingState>(ctx, *this);
+        current = std::make_unique<CookingState3D>(ctx, *this);
         break;
     case StateID::Assembling:
         current = std::make_unique<AssembleState>(ctx, *this);

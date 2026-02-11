@@ -130,6 +130,8 @@
   <ItemGroup>
     <None Include="bar.frag" />
     <None Include="bar.vert" />
+    <None Include="mesh3d.frag" />
+    <None Include="mesh3d.vert" />
     <None Include="packages.config" />
     <None Include="rect.frag" />
     <None Include="rect.vert" />
@@ -137,11 +139,15 @@
   <ItemGroup>
     <ClInclude Include="AssembleState.h" />
     <ClInclude Include="CookingState.h" />
+    <ClInclude Include="CookingState3D.h" />
     <ClInclude Include="GameContext.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Ingredient.h" />
     <ClInclude Include="MenuState.h" />
+    <ClInclude Include="mesh.hpp" />
+    <ClInclude Include="model.hpp" />
     <ClInclude Include="Puddle.h" />
+    <ClInclude Include="shader.hpp" />
     <ClInclude Include="StateManager.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Util.h" />
@@ -149,6 +155,7 @@
   <ItemGroup>
     <ClCompile Include="AssebleState.cpp" />
     <ClCompile Include="CookingState.cpp" />
+    <ClCompile Include="CookingState3D.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MenuState.cpp" />
     <ClCompile Include="StateManager.cpp" />
@@ -180,6 +187,9 @@
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\glfw.3.4.0\build\native\glfw.targets" Condition="Exists('..\packages\glfw.3.4.0\build\native\glfw.targets')" />
     <Import Project="..\packages\glew-2.2.0.2.2.0.1\build\native\glew-2.2.0.targets" Condition="Exists('..\packages\glew-2.2.0.2.2.0.1\build\native\glew-2.2.0.targets')" />
+    <Import Project="..\packages\Assimp.redist.3.0.0\build\native\Assimp.redist.targets" Condition="Exists('..\packages\Assimp.redist.3.0.0\build\native\Assimp.redist.targets')" />
+    <Import Project="..\packages\Assimp.3.0.0\build\native\Assimp.targets" Condition="Exists('..\packages\Assimp.3.0.0\build\native\Assimp.targets')" />
+    <Import Project="..\packages\glm.1.0.3\build\native\glm.targets" Condition="Exists('..\packages\glm.1.0.3\build\native\glm.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -187,5 +197,8 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\glfw.3.4.0\build\native\glfw.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glfw.3.4.0\build\native\glfw.targets'))" />
     <Error Condition="!Exists('..\packages\glew-2.2.0.2.2.0.1\build\native\glew-2.2.0.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glew-2.2.0.2.2.0.1\build\native\glew-2.2.0.targets'))" />
+    <Error Condition="!Exists('..\packages\Assimp.redist.3.0.0\build\native\Assimp.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Assimp.redist.3.0.0\build\native\Assimp.redist.targets'))" />
+    <Error Condition="!Exists('..\packages\Assimp.3.0.0\build\native\Assimp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Assimp.3.0.0\build\native\Assimp.targets'))" />
+    <Error Condition="!Exists('..\packages\glm.1.0.3\build\native\glm.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glm.1.0.3\build\native\glm.targets'))" />
   </Target>
 </Project>
