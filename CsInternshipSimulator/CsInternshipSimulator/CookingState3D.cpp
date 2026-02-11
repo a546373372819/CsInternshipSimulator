@@ -19,7 +19,7 @@
 
 CookingState3D::CookingState3D(GameContext& ctx, StateManager& manager)
     : GameState(ctx, manager)
-    // Paths are examples – set them to your real files:
+    // Paths are examples â€“ set them to your real files:
     
     , mShader3D("mesh3d.vert", "mesh3d.frag")
     , mStove("text/stove.obj")
@@ -74,6 +74,11 @@ CookingState3D::CookingState3D(GameContext& ctx, StateManager& manager)
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // Keep static room geometry on texture unit 0 for predictable sampling.
+    mShader3D.use();
+    mShader3D.setInt("uDiffMap1", 0);
+    mShader3D.setFloat("uCookProgress", 0.0f);
 }
 
 
@@ -160,12 +165,11 @@ void CookingState3D::render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // --- Build camera matrices ---
-    int w, h;
-    // If you store size in context, use that instead.
-    // For GLFW, you can fetch framebuffer size:
-    // (if you have a window pointer in ctx, use that; else skip and use fixed)
-    // Here we assume 1280x720 fallback:
-    w = 1280; h = 720;
+    int w = 1280;
+    int h = 720;
+    if (GLFWwindow* window = glfwGetCurrentContext()) {
+        glfwGetFramebufferSize(window, &w, &h);
+    }
 
     glm::mat4 projection = glm::perspective(glm::radians(60.0f),
         float(w) / float(h),
@@ -173,43 +177,42 @@ void CookingState3D::render()
 
     glm::mat4 view = glm::lookAt(mCamPos, mCamTarget, glm::vec3(0, 1, 0));
 
-    
-
-
     // --- Use 3D shader ---
     mShader3D.use();
     mShader3D.setMat4("view", view);
     mShader3D.setMat4("projection", projection);
     mShader3D.setVec3("lightPos", mLightPos);
     mShader3D.setVec3("viewPos", mCamPos);
+    mShader3D.setFloat("uCookProgress", 0.0f);
 
-
-    //walls
+    // walls / floor
     glBindVertexArray(roomVAO);
-
-    float R = 6.0f;
-    float floorY = 0.0f;
-    float ceilY = 4.0f;
-
-    // FLOOR
-    glBindTexture(GL_TEXTURE_2D, floorTex);
-    glm::mat4 M = glm::translate(glm::mat4(1), { 0, floorY, 0  });
-    M = glm::scale(M, { R,1,R });
-    mShader3D.setMat4("model", M);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-
-    // WALL (back)
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, wallTex);
-    M = glm::translate(glm::mat4(1), { 0, 2.0f, -R });
-    M = glm::rotate(M, glm::radians(90.f), { 1,0,0 });
-    M = glm::scale(M, { R,1,2.0f });
-    mShader3D.setMat4("model", M);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    mShader3D.setBool("uHasDiffuseMap", true);
+
+    constexpr float kRoomHalfExtent = 6.0f;
+    constexpr float kWallMidY = 2.0f;
+
+    auto drawRoomFace = [&](GLuint texture, const glm::mat4& model) {
+        glBindTexture(GL_TEXTURE_2D, texture);
+        mShader3D.setMat4("model", model);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+    };
+
+    const glm::mat4 floorModel = glm::scale(
+        glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
+        glm::vec3(kRoomHalfExtent, 1.0f, kRoomHalfExtent));
+    drawRoomFace(floorTex, floorModel);
+
+    glm::mat4 backWallModel = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, kWallMidY, -kRoomHalfExtent));
+    backWallModel = glm::rotate(backWallModel, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    backWallModel = glm::scale(backWallModel, glm::vec3(kRoomHalfExtent, 1.0f, 2.0f));
+    drawRoomFace(wallTex, backWallModel);
 
     // --- Draw stove ---
     {
-        glm::mat4 M = makeModelMatrix(mStovePos, mStoveScale);
+        mShader3D.setBool("uHasDiffuseMap", true);
+        const glm::mat4 M = makeModelMatrix(mStovePos, mStoveScale);
         mShader3D.setMat4("model", M);
         mShader3D.setFloat("uCookProgress", 0.0f); // stove doesn't cook
         mStove.Draw(mShader3D);
@@ -217,7 +220,7 @@ void CookingState3D::render()
 
     // --- Draw patty with browning ---
     {
-        glm::mat4 M = makeModelMatrix(mPattyPos, mPattyScale);
+        const glm::mat4 M = makeModelMatrix(mPattyPos, mPattyScale);
         mShader3D.setMat4("model", M);
 
         float visualCook = std::min(cookProgress, 0.75f);
@@ -226,7 +229,7 @@ void CookingState3D::render()
         mPatty.Draw(mShader3D);
     }
 
-    // --- Draw 2D overlays (optional) ---
+// --- Draw 2D overlays (optional) ---
     // If you already have loading bar/index drawn in 2D, do it last:
     //
     // glDisable(GL_DEPTH_TEST);
