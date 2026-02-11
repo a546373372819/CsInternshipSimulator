@@ -89,42 +89,49 @@ unsigned int createShader(const char* vsSource, const char* fsSource)
     return program;
 }
 
-unsigned loadImageToTexture(const char* filePath) {
-    int TextureWidth;
-    int TextureHeight;
-    int TextureChannels;
-    unsigned char* ImageData = stbi_load(filePath, &TextureWidth, &TextureHeight, &TextureChannels, 0);
-    if (ImageData != NULL)
-    {
-        //Slike se osnovno ucitavaju naopako pa se moraju ispraviti da budu uspravne
-        stbi__vertical_flip(ImageData, TextureWidth, TextureHeight, TextureChannels);
+unsigned loadImageToTexture(const char* filePath)
+{
+    int w, h, channels;
+    stbi_set_flip_vertically_on_load(true); // use official flip instead of stbi__vertical_flip
+    unsigned char* data = stbi_load(filePath, &w, &h, &channels, 0);
 
-        // Provjerava koji je format boja ucitane slike
-        GLint InternalFormat = -1;
-        switch (TextureChannels) {
-        case 1: InternalFormat = GL_RED; break;
-        case 2: InternalFormat = GL_RG; break;
-        case 3: InternalFormat = GL_RGB; break;
-        case 4: InternalFormat = GL_RGBA; break;
-        default: InternalFormat = GL_RGB; break;
-        }
-
-        unsigned int Texture;
-        glGenTextures(1, &Texture);
-        glBindTexture(GL_TEXTURE_2D, Texture);
-        glTexImage2D(GL_TEXTURE_2D, 0, InternalFormat, TextureWidth, TextureHeight, 0, InternalFormat, GL_UNSIGNED_BYTE, ImageData);
-        glBindTexture(GL_TEXTURE_2D, 0);
-        // oslobadjanje memorije zauzete sa stbi_load posto vise nije potrebna
-        stbi_image_free(ImageData);
-        return Texture;
-    }
-    else
-    {
-        std::cout << "Textura nije ucitana! Putanja texture: " << filePath << std::endl;
-        stbi_image_free(ImageData);
+    if (!data) {
+        std::cout << "Textura nije ucitana! Putanja texture: " << filePath << "\n";
         return 0;
     }
+
+    GLenum format = GL_RGB;
+    switch (channels) {
+    case 1: format = GL_RED;  break;
+    case 2: format = GL_RG;   break;
+    case 3: format = GL_RGB;  break;
+    case 4: format = GL_RGBA; break;
+    default: format = GL_RGB; break;
+    }
+
+    GLuint tex = 0;
+    glGenTextures(1, &tex);
+    glBindTexture(GL_TEXTURE_2D, tex);
+
+    // Upload
+    glTexImage2D(GL_TEXTURE_2D, 0, format, w, h, 0, format, GL_UNSIGNED_BYTE, data);
+
+    // IMPORTANT: texture sampling parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // IMPORTANT: generate mipmaps (prevents “incomplete texture” black sampling)
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    stbi_image_free(data);
+
+    return tex;
 }
+
 
 GLFWcursor* loadImageToCursor(const char* filePath) {
     int TextureWidth;

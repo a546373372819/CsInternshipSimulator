@@ -47,6 +47,10 @@ private:
     GLuint floorTex = 0;
     GLuint ceilingTex = 0;
 
+    float mRoomHalfExtent ;     // room extends [-6..6] in X and Z
+    float mRoomHeight;     // y=0 floor, y=4 ceiling
+    float mRoomUVTiling;
+
     // Light
     glm::vec3 mLightPos = glm::vec3(2.0f, 4.0f, 2.0f);
 
