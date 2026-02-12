@@ -154,10 +154,7 @@ private:
         material->Get(AI_MATKEY_NAME, name);
         std::cout << "Material name: " << name.C_Str() << "\n";
 
-        std::cout << "DIFFUSE count: " << material->GetTextureCount(aiTextureType_DIFFUSE) << "\n";
-        std::cout << "NORMALS count: " << material->GetTextureCount(aiTextureType_NORMALS) << "\n";
 
-        std::cout << "SPECULAR count: " << material->GetTextureCount(aiTextureType_SPECULAR) << "\n";
 
         // 1. diffuse maps
         vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "uDiffMap");
@@ -167,12 +164,20 @@ private:
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 
         aiColor3D kd(1.0f, 1.0f, 1.0f);
-        material->Get(AI_MATKEY_COLOR_DIFFUSE, kd);
+        aiColor3D ks(0.04f, 0.04f, 0.04f);
+        float ns = 32.0f;
+
+        material->Get(AI_MATKEY_COLOR_DIFFUSE, kd);     // Kd
+        material->Get(AI_MATKEY_COLOR_SPECULAR, ks);    // Ks
+        material->Get(AI_MATKEY_SHININESS, ns);         // Ns
+
 
         // return a mesh object created from the extracted mesh data
-        Mesh m(vertices, indices, textures);
-        m.kd = glm::vec3(kd.r, kd.g, kd.b);
-        return m;
+        return Mesh(vertices, indices, textures,
+            glm::vec3(kd.r, kd.g, kd.b),
+            glm::vec3(ks.r, ks.g, ks.b),
+            ns);
+       
     }
 
     // checks all material textures of a given type and loads the textures if they're not loaded yet.

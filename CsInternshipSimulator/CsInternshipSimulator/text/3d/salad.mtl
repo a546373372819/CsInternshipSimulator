@@ -1,0 +1,14 @@
+# Blender 4.2.0 MTL File: 'uploads_files_4661590_pate.blend'
+# www.blender.org
+
+newmtl salade_(_matériau_005)
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd salad3d.png
+map_Ns Matériau.005_Roughness.png
+map_refl Matériau.005_Metallic.png
+map_Bump -bm 1.000000 Matériau.005_Normal_OpenGL.png

@@ -1,0 +1,12 @@
+newmtl pasted__phong1SG
+illum 4
+Kd 0.00 0.00 0.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd VF_Coffee_Table_Textures_BaseColor.png
+map_Ka VF_Coffee_Table_Textures_AO.png
+bump  -bm 1 VF_Coffee_Table_Textures_Normal.png
+Ni 1.00
+Ks 0.00 0.00 0.00
+map_Ks VF_Coffee_Table_Textures_Metallic.png
+Ns 18.00

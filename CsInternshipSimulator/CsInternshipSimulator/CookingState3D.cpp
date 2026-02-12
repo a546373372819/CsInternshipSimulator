@@ -30,8 +30,8 @@ static glm::mat4 MakeTRS(const glm::vec3& pos, const glm::vec3& rotDegXYZ, const
 CookingState3D::CookingState3D(GameContext& ctx, StateManager& manager)
     : GameState(ctx, manager)
     , mShader3D("mesh3d.vert", "mesh3d.frag")
-    , mStove("text/stove.obj")
-    , mPatty("text/patty.obj")
+    , mStove("text/3d/stove.obj")
+    , mPatty("text/3d/patty.obj")
 {
     // -----------------------------
     // Room parameters (tweak freely)
@@ -50,20 +50,20 @@ CookingState3D::CookingState3D(GameContext& ctx, StateManager& manager)
     mStoveScale = glm::vec3(0.80f);
 
     // Patty placement (tweak freely)
-    mPattyScale = glm::vec3(0.25f);
+    mPattyScale = glm::vec3(0.1f);
     mPattyPos = glm::vec3(0.0f, 1.05f, -2.5f); // start above stove
 
     // Cooking/collision constants (you MUST tune these to your model sizes)
     // These are WORLD units. If your stove model is not aligned, adjust.
-    stoveTopY = 1.00f;     // y of stove top plane (world)
-    pattyHalfHeight = 0.05f;     // half thickness used for snapping (world)
+    stoveTopY = 0.665966f;     // y of stove top plane (world)
+    pattyHalfHeight = 0.0f;     // half thickness used for snapping (world)
 
     // Stove top bounds in world XZ where patty is allowed to cook.
     // Centered around stove position; tune to your stove mesh.
-    stoveMinX = mStovePos.x - 0.60f;
-    stoveMaxX = mStovePos.x + 0.60f;
-    stoveMinZ = mStovePos.z - 0.60f;
-    stoveMaxZ = mStovePos.z + 0.60f;
+    stoveMinX = mStovePos.x - 1.0321f;
+    stoveMaxX = mStovePos.x  -0.528058f;
+    stoveMinZ = mStovePos.z - 0.20f;
+    stoveMaxZ = mStovePos.z + 0.30f;
 
     // Movement/cooking
     mMoveSpeed = 1.8f;
@@ -113,9 +113,9 @@ CookingState3D::CookingState3D(GameContext& ctx, StateManager& manager)
     // -----------------------------
     // Load textures for the room
     // -----------------------------
-    wallTex = loadImageToTexture("text/wall.jpg");
-    floorTex = loadImageToTexture("text/wall.jpg");
-    ceilingTex = loadImageToTexture("text/wall.jpg");
+    wallTex = loadImageToTexture("text/walls.png");
+    floorTex = loadImageToTexture("text/floor.png");
+    ceilingTex = loadImageToTexture("text/walls.png");
 
     // 3D essentials
     glEnable(GL_DEPTH_TEST);
@@ -130,7 +130,12 @@ CookingState3D::CookingState3D(GameContext& ctx, StateManager& manager)
 
     // cook uniform (patty)
     mShader3D.setFloat("uCookProgress", 0.0f);
+
+    mCamFront = glm::normalize(mCamTarget - mCamPos);
+
 }
+
+
 
 glm::mat4 CookingState3D::makeModelMatrix(const glm::vec3& pos, const glm::vec3& scale) const
 {
@@ -173,6 +178,7 @@ void CookingState3D::update(GLFWwindow* window, float dt)
     clampPattyToTable();
 
     // Stove collision + snap
+    // Stove collision + snap
     float prevBottomY = prevPos.y - pattyHalfHeight;
     float bottomY = mPattyPos.y - pattyHalfHeight;
 
@@ -182,9 +188,9 @@ void CookingState3D::update(GLFWwindow* window, float dt)
 
     bool touchingPlane = (bottomY <= stoveTopY);
     bool touchingStove = overStove && touchingPlane;
-
+    
     // Snap only when moving downward onto the plane
-    if (touchingStove && prevBottomY > stoveTopY) {
+    if (touchingStove ) {
         mPattyPos.y = stoveTopY + pattyHalfHeight;
         bottomY = stoveTopY;
     }
@@ -195,9 +201,80 @@ void CookingState3D::update(GLFWwindow* window, float dt)
         if (cookProgress >= 1.0f) {
             cookProgress = 1.0f;
             isCooked = true;
-            // manager.changeState(...); // you can hook your state transition here
+            manager.changeState(StateID::Assembling);
         }
     }
+
+    //camera 
+
+    if (!mCamInputInit) {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwGetCursorPos(window, &mLastMouseX, &mLastMouseY);
+        mFirstMouse = false;
+        mCamInputInit = true;
+    }
+
+    // mouse look (polling)
+    double mx, my;
+    glfwGetCursorPos(window, &mx, &my);
+
+    double xoffset = mx - mLastMouseX;
+    double yoffset = mLastMouseY - my; // reversed Y
+
+    mLastMouseX = mx;
+    mLastMouseY = my;
+
+    mYaw += float(xoffset) * mMouseSensitivity;
+    mPitch += float(yoffset) * mMouseSensitivity;
+
+    // clamp pitch to avoid flip
+    if (mPitch > 89.0f)  mPitch = 89.0f;
+    if (mPitch < -89.0f) mPitch = -89.0f;
+
+    // recompute forward from yaw/pitch
+    glm::vec3 front;
+    front.x = cos(glm::radians(mYaw)) * cos(glm::radians(mPitch));
+    front.y = sin(glm::radians(mPitch));
+    front.z = sin(glm::radians(mYaw)) * cos(glm::radians(mPitch));
+    mCamFront = glm::normalize(front);
+
+    // update target from position + direction
+    mCamTarget = mCamPos + mCamFront;
+
+    //moving
+
+    const float speed = mCamMoveSpeed * dt;
+
+    // right vector
+    glm::vec3 right = glm::normalize(glm::cross(mCamFront, mCamUp));
+
+    // Arrow keys: move camera
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+        mCamPos += mCamFront * speed;
+
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        mCamPos -= mCamFront * speed;
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        mCamPos -= right * speed;
+
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        mCamPos += right * speed;
+
+    // optional vertical movement (PageUp/PageDown)
+    if (glfwGetKey(window, GLFW_KEY_PAGE_UP) == GLFW_PRESS)
+        mCamPos += mCamUp * speed;
+
+    if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
+        mCamPos -= mCamUp * speed;
+
+    // keep target consistent
+    mCamTarget = mCamPos + mCamFront;
+
+    //bar 
+
+   
+
 }
 
 void CookingState3D::render()
@@ -271,13 +348,13 @@ void CookingState3D::render()
     // Left wall (ZY plane at x=-E), face inward
     drawQuadFace(
         wallTex,
-        MakeTRS(glm::vec3(-E, H * 0.5f, -4.0f), glm::vec3(0, 0, -90), glm::vec3(E, 1.0f, H ))
+        MakeTRS(glm::vec3(-E, H * 0.5f, 0), glm::vec3(-90, 0, -90), glm::vec3(E, 1.0f, H ))
     );
 
     // Right wall (ZY plane at x=+E), face inward
     drawQuadFace(
         wallTex,
-        MakeTRS(glm::vec3(+E, H * 0.5f, -4.0f), glm::vec3(0, 0, 90), glm::vec3(E, 1.0f, H))
+        MakeTRS(glm::vec3(+E, H * 0.5f, 0), glm::vec3(90, 0, 90), glm::vec3(E, 1.0f, H))
     );
 
 
@@ -307,4 +384,31 @@ void CookingState3D::render()
     }
 
     // Optional overlays (2D) go here after 3D
+     //  loading bar 
+    glUseProgram(ctx.barShader);
+    glBindVertexArray(ctx.VAObar);
+
+    // zajednicke granice bara
+    glUniform1f(glGetUniformLocation(ctx.barShader, "uLeft"), barLeft);
+    glUniform1f(glGetUniformLocation(ctx.barShader, "uRight"), barRight);
+    glUniform1f(glGetUniformLocation(ctx.barShader, "uTop"), barTop);
+    glUniform1f(glGetUniformLocation(ctx.barShader, "uBottom"), barBottom);
+
+    
+
+    //zeleni deo
+    float t = cookProgress;
+
+    std::cout << t << "\n";
+
+    if (t < 0.0f) t = 0.0f;
+    if (t > 1.0f) t = 1.0f;
+    glUniform1f(glGetUniformLocation(ctx.barShader, "uFill"), t);
+    glUniform4f(glGetUniformLocation(ctx.barShader, "uColor"), 0.2f, 0.8f, 0.2f, 0.9f);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+
+    //  sivi prazan bar 
+    glUniform1f(glGetUniformLocation(ctx.barShader, "uFill"), 1.0f);
+    glUniform4f(glGetUniformLocation(ctx.barShader, "uColor"), 0.1f, 0.1f, 0.1f, 0.7f);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }

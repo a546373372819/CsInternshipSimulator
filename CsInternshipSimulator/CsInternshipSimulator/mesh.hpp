@@ -37,69 +37,65 @@ public:
     vector<Texture>      textures;
 
     glm::vec3 kd = glm::vec3(1.0f);
+    glm::vec3 ks = glm::vec3(0.04f);
+    float ns = 32.0f;
 
     unsigned int VAO;
 
-    unsigned int whiteTex;
     
 
     // constructor
-    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
+    Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures,
+        glm::vec3 kd, glm::vec3 ks, float ns)
     {
         this->vertices = vertices;
         this->indices = indices;
         this->textures = textures;
+        this->kd = kd;
+        this->ks = ks;
+        this->ns = ns;
 
-        // now that we have all the required data, set the vertex buffers and its attribute pointers.
         setupMesh();
-
     }
 
     // render the mesh
     void Draw(Shader& shader)
     {
-        // bind appropriate textures
+        bool hasDiffuse = false;
+        bool hasSpec = false;
+
         unsigned int diffuseNr = 1;
         unsigned int specularNr = 1;
-        unsigned int normalNr = 1;
 
-      
-
+        // bind textures that exist
         for (unsigned int i = 0; i < textures.size(); i++)
         {
-            glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
-            // retrieve texture number (the N in diffuse_textureN)
-            string number;
+            glActiveTexture(GL_TEXTURE0 + i);
             string name = textures[i].type;
+            string number;
 
-            if (name == "uDiffMap")
-                number = std::to_string(diffuseNr++);
-            else
-                number = std::to_string(specularNr++); // transfer unsigned int to string
+            if (name == "uDiffMap") { number = std::to_string(diffuseNr++); hasDiffuse = true; }
+            else if (name == "uSpecMap") { number = std::to_string(specularNr++); hasSpec = true; }
+            else continue;
 
-            // now set the sampler to the correct texture unit
             glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), i);
-            // and finally bind the texture
             glBindTexture(GL_TEXTURE_2D, textures[i].id);
         }
 
-        glUniform3fv(
-            glGetUniformLocation(shader.ID, "uKd"),
-            1,
-            &kd[0]
-        );
+        // material uniforms (THIS is where Ks/Ns finally get used)
+        shader.setBool("uHasDiffuseMap", hasDiffuse);
+        shader.setBool("uHasSpecMap", hasSpec);
+        shader.setVec3("uKd", kd);
+        shader.setVec3("uKs", ks);
+        shader.setFloat("uNs", ns);
+        // if no diffuse map, the shader will use uKd (so do NOT bind a white texture)
+        // but still ensure sampler points to 0 (harmless)
+        shader.setInt("uDiffMap1", 0);
 
-        glUniform1i(
-            glGetUniformLocation(shader.ID, "uHasDiffuseMap"),
-            !textures.empty()
-        );
-
-        // draw mesh
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, (unsigned int)indices.size(), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
 
-        // always good practice to set everything back to defaults once configured.
         glActiveTexture(GL_TEXTURE0);
     }
 

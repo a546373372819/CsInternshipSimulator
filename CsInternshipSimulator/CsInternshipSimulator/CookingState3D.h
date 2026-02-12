@@ -22,6 +22,7 @@ public:
 
     void update(GLFWwindow* window, float dt) override;
     void render() override;
+    void cameraMove();
 
 private:
     // 3D shader and models
@@ -68,6 +69,27 @@ private:
 
     // Patty approximate size (tune to match model)
     float pattyHalfHeight = 0.08f;
+
+    // camera control
+    bool   mCamInputInit = false;
+    bool   mFirstMouse = true;
+    double mLastMouseX = 0.0;
+    double mLastMouseY = 0.0;
+
+    float  mYaw = -90.0f;   // looking down -Z
+    float  mPitch = 0.0f;
+
+    float  mMouseSensitivity = 0.12f;
+    float  mCamMoveSpeed = 3.5f;    // units/sec
+
+    glm::vec3 mCamFront = glm::vec3(0, 0, -1);
+    glm::vec3 mCamUp = glm::vec3(0, 1, 0);
+
+    float barLeft = -0.8f;
+    float barRight = 0.8f;
+    float barTop = 0.9f;
+    float barBottom = 0.85f;
+
 
 private:
     glm::mat4 makeModelMatrix(const glm::vec3& pos, const glm::vec3& scale) const;
