@@ -41,7 +41,7 @@ void MenuState::update(GLFWwindow* window, float /*dt*/)
 
 
             PlaySound(TEXT("sound/mcdonalds-beeping-sound.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
-            manager.changeState(StateID::Assembling);
+            manager.changeState(StateID::Cooking);
 
 
         }
