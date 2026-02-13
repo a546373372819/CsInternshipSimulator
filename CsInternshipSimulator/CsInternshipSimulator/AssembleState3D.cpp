@@ -27,18 +27,18 @@ AssembleState3D::AssembleState3D(GameContext& ctx, StateManager& manager)
     , mustardPuddle("text/3d/mustardpuddle.obj")
     , cheese("text/3d/cheese.obj")
 {
-    
+
     mRoomHalfExtent = 6.0f;     // room extends [-6..6] in X and Z
     mRoomHeight = 4.0f;     // y=0 floor, y=4 ceiling
     mRoomUVTiling = 6.0f;     // how many times textures repeat on each face
 
     // Camera + light (tweak freely)
-    mCamPos = glm::vec3(0.0345848f,1.05756f,1.18858);
-    mCamTarget = glm::vec3( 0.028343f,0.941237f,0.19539);
+    mCamPos = glm::vec3(0.0345848f, 1.05756f, 1.18858);
+    mCamTarget = glm::vec3(0.028343f, 0.941237f, 0.19539);
     mLightPos = glm::vec3(-0.5f, 1.5f, 0.5f);
 
     // Stove placement (tweak freely)
- 
+
 
     // -----------------------------------------
     // Room geometry: one quad on XZ plane (y=0)
@@ -115,14 +115,14 @@ void AssembleState3D::initIngredients()
 
     ingredients[0] = { IngredientType::BottomBun,startPos,mIngScale , false, false, bottomBun };
     ingredients[1] = { IngredientType::Patty,startPos,mIngScale, false, false, patty };
-    ingredients[2] = { IngredientType::Ketchup,startPos ,mIngScale*glm::vec3(4) , false, false, ketchupBottle };
+    ingredients[2] = { IngredientType::Ketchup,startPos ,mIngScale * glm::vec3(4) , false, false, ketchupBottle };
     ingredients[3] = { IngredientType::Mustard,startPos ,mIngScale * glm::vec3(4) , false, false, mustardBottle };
     ingredients[4] = { IngredientType::Pickles,startPos ,mIngScale , false, false, pickles };
-        ingredients[5] = { IngredientType::Onion,startPos ,mIngScale , false, false, onion };
-        ingredients[6] = { IngredientType::Lettuce,startPos ,mIngScale , false, false, lettuce };;
-        ingredients[7] = { IngredientType::Cheese,startPos ,mIngScale , false, false, cheese };;
-        ingredients[8] = { IngredientType::Tomato,startPos ,mIngScale , false, false, tomato };;
-        ingredients[9] = { IngredientType::TopBun,startPos ,mIngScale , false, false, topBun };;
+    ingredients[5] = { IngredientType::Onion,startPos ,mIngScale , false, false, onion };
+    ingredients[6] = { IngredientType::Lettuce,startPos ,mIngScale , false, false, lettuce };;
+    ingredients[7] = { IngredientType::Cheese,startPos ,mIngScale , false, false, cheese };;
+    ingredients[8] = { IngredientType::Tomato,startPos ,mIngScale , false, false, tomato };;
+    ingredients[9] = { IngredientType::TopBun,startPos ,mIngScale , false, false, topBun };;
 
 
     currentIg = -1;
@@ -135,7 +135,7 @@ glm::mat4 AssembleState3D::makeModelMatrix(const glm::vec3& pos, const glm::vec3
     M = glm::scale(M, scale);
     return M;
 
-    
+
 }
 
 void AssembleState3D::update(GLFWwindow* window, float dt)
@@ -145,54 +145,74 @@ void AssembleState3D::update(GLFWwindow* window, float dt)
         glfwSetWindowShouldClose(window, GLFW_TRUE);
         return;
     }
+    if (currentIg < 10) {
 
-    // -------- mouse look init ----------
-    if (!mCamInputInit) {
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        glfwGetCursorPos(window, &mLastMouseX, &mLastMouseY);
-        mCamInputInit = true;
+        // -------- mouse look init ----------
+        if (!mCamInputInit) {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            glfwGetCursorPos(window, &mLastMouseX, &mLastMouseY);
+            mCamInputInit = true;
+        }
+
+        // -------- mouse look ----------
+        double mx, my;
+        glfwGetCursorPos(window, &mx, &my);
+
+        double xoffset = mx - mLastMouseX;
+        double yoffset = mLastMouseY - my; // reversed y
+
+        mLastMouseX = mx;
+        mLastMouseY = my;
+
+        mYaw += float(xoffset) * mMouseSensitivity;
+        mPitch += float(yoffset) * mMouseSensitivity;
+
+        // no std::clamp:
+        if (mPitch > 89.0f)  mPitch = 89.0f;
+        if (mPitch < -89.0f) mPitch = -89.0f;
+
+        glm::vec3 front;
+        front.x = std::cos(glm::radians(mYaw)) * std::cos(glm::radians(mPitch));
+        front.y = std::sin(glm::radians(mPitch));
+        front.z = std::sin(glm::radians(mYaw)) * std::cos(glm::radians(mPitch));
+        mCamFront = glm::normalize(front);
+
+        // -------- arrow key movement ----------
+        const float speed = mCamMoveSpeed * dt;
+        glm::vec3 right = glm::normalize(glm::cross(mCamFront, mCamUp));
+
+        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)    mCamPos += mCamFront * speed;
+        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)  mCamPos -= mCamFront * speed;
+        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)  mCamPos -= right * speed;
+        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) mCamPos += right * speed;
+
+        // Optional vertical movement:
+        if (glfwGetKey(window, GLFW_KEY_PAGE_UP) == GLFW_PRESS)   mCamPos += mCamUp * speed;
+        if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS) mCamPos -= mCamUp * speed;
+
+        mCamTarget = mCamPos + mCamFront;
     }
 
-    // -------- mouse look ----------
-    double mx, my;
-    glfwGetCursorPos(window, &mx, &my);
+    static bool zWasDown = false;
+    bool zDown = glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS;
+    if (zDown && !zWasDown) ctx.gDepthTestOn = !ctx.gDepthTestOn;
+    zWasDown = zDown;
 
-    double xoffset = mx - mLastMouseX;
-    double yoffset = mLastMouseY - my; // reversed y
-
-    mLastMouseX = mx;
-    mLastMouseY = my;
-
-    mYaw += float(xoffset) * mMouseSensitivity;
-    mPitch += float(yoffset) * mMouseSensitivity;
-
-    // no std::clamp:
-    if (mPitch > 89.0f)  mPitch = 89.0f;
-    if (mPitch < -89.0f) mPitch = -89.0f;
-
-    glm::vec3 front;
-    front.x = std::cos(glm::radians(mYaw)) * std::cos(glm::radians(mPitch));
-    front.y = std::sin(glm::radians(mPitch));
-    front.z = std::sin(glm::radians(mYaw)) * std::cos(glm::radians(mPitch));
-    mCamFront = glm::normalize(front);
-
-    // -------- arrow key movement ----------
-    const float speed = mCamMoveSpeed * dt;
-    glm::vec3 right = glm::normalize(glm::cross(mCamFront, mCamUp));
-
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)    mCamPos += mCamFront * speed;
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)  mCamPos -= mCamFront * speed;
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)  mCamPos -= right * speed;
-    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) mCamPos += right * speed;
-
-    // Optional vertical movement:
-    if (glfwGetKey(window, GLFW_KEY_PAGE_UP) == GLFW_PRESS)   mCamPos += mCamUp * speed;
-    if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS) mCamPos -= mCamUp * speed;
-
-    mCamTarget = mCamPos + mCamFront;
+    static bool cWasDown = false;
+    bool cDown = glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS;
+    if (cDown && !cWasDown) ctx.gCullOn = !ctx.gCullOn;
+    cWasDown = cDown;
 
     moveCurrentIngredient3D(window, dt);
     updatePuddles();
+    static bool lWasDown = false;
+    bool lDown = (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS);
+
+    if (lDown && !lWasDown) {
+        lightOn = !lightOn;
+    }
+
+    lWasDown = lDown;
 
 
 }
@@ -231,7 +251,7 @@ static void clampToTableXZ(glm::vec3& p,
     if (p.y - 0.01 < 0.6)  p.y = 0.6 + 0.01;
 }
 
-void AssembleState3D::moveCurrentIngredient3D( GLFWwindow* window, float dt)
+void AssembleState3D::moveCurrentIngredient3D(GLFWwindow* window, float dt)
 {
     if (currentIg < 0 || currentIg >= ctx.NUM_INGREDIENTS)
         return;
@@ -255,15 +275,15 @@ void AssembleState3D::moveCurrentIngredient3D( GLFWwindow* window, float dt)
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) newPos.x -= move;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) newPos.x += move;
 
-    // Optional: let player “drop” with Q/E or R/F
+    // Optional: let player 'drop' with Q/E or R/F
     // (You need some way to move down to trigger placement.)
     if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) newPos.y -= move; // down
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) newPos.y += move; // up
 
     // ---- clamp XZ to table ----
     clampToTableXZ(newPos,
-       -0.6, 0.6,
-       -0.3, 0.3,
+        -0.6, 0.6,
+        -0.3, 0.3,
         glm::vec3(0.05));
 
     // Optionally keep it hovering slightly above table while moving:
@@ -277,7 +297,13 @@ void AssembleState3D::moveCurrentIngredient3D( GLFWwindow* window, float dt)
         bool spaceDown = (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS);
 
         if (spaceDown && !spaceWasDown) {
+#if defined(DEBUG_ASSEMBLE_LOGS)
+#if defined(DEBUG_ASSEMBLE_LOGS)
+#if defined(DEBUG_ASSEMBLE_LOGS)
             std::cout << "spawn";
+#endif
+#endif
+#endif
             spawnPuddleFor3D(ing); // implement: use ing.pos.xz, plate plane Y
         }
         spaceWasDown = spaceDown;
@@ -300,7 +326,7 @@ void AssembleState3D::moveCurrentIngredient3D( GLFWwindow* window, float dt)
         float overlapShrink = 0.8f)
     {
         // need overlap in XZ
-        
+
         if ((ing.mPos.x - ingredientHalfWidth < supportCenter.x + supportHalf) &&
             (ing.mPos.x + ingredientHalfWidth > supportCenter.x - supportHalf) &&
             (ing.mPos.z - ingredientHalfWidth < supportCenter.z + supportHalf) &&
@@ -321,10 +347,14 @@ void AssembleState3D::moveCurrentIngredient3D( GLFWwindow* window, float dt)
     // ---- plate support ----
     // Plate is a flat support region:
     // ctx.plateCenter, ctx.plateHalf (XZ extents), ctx.plateTopY
-    trySupportPlane(mPlatePos, 0.08f, mPlatePos.y-0.07, 0.75f);
+    trySupportPlane(mPlatePos, 0.08f, mPlatePos.y - 0.07, 0.75f);
+#if defined(DEBUG_ASSEMBLE_LOGS)
+#if defined(DEBUG_ASSEMBLE_LOGS)
     std::cout << mPlatePos.x << "," << mPlatePos.y << "," << mPlatePos.z << "," << '\n';
-  
 
+
+#endif
+#endif
     // ---- placed ingredients support ----
     if (!foundSupport) {
         for (int i = 0; i < 10; ++i) {
@@ -341,18 +371,26 @@ void AssembleState3D::moveCurrentIngredient3D( GLFWwindow* window, float dt)
             }
             // top surface of that ingredient:
 
-            // support region is the base ingredient’s footprint in XZ
+            // support region is the base ingredient's footprint in XZ
             trySupportPlane(base.mPos, ingredientHalfWidth, topY, 0.75f);
 
             if (foundSupport) {
+#if defined(DEBUG_ASSEMBLE_LOGS)
+#if defined(DEBUG_ASSEMBLE_LOGS)
                 std::cout << "ing";
+#endif
+#endif
                 break;
             }
         }
     }
     else {
+#if defined(DEBUG_ASSEMBLE_LOGS)
+#if defined(DEBUG_ASSEMBLE_LOGS)
         std::cout << "plate";
 
+#endif
+#endif
     }
 
     if (foundSupport) {
@@ -365,7 +403,11 @@ void AssembleState3D::moveCurrentIngredient3D( GLFWwindow* window, float dt)
         }
         else {
             // finished
+#if defined(DEBUG_ASSEMBLE_LOGS)
+#if defined(DEBUG_ASSEMBLE_LOGS)
             std::cout << "Burger assembled (3D)!\n";
+#endif
+#endif
         }
     }
 }
@@ -385,7 +427,7 @@ void AssembleState3D::spawnPuddleFor3D(const Ingredient3D& ing)
     );
 
     // Flat puddle (lies on table)
- 
+
     if (ing.type == IngredientType::Ketchup)
         p.model = ketchupPuddle;
     else
@@ -394,7 +436,7 @@ void AssembleState3D::spawnPuddleFor3D(const Ingredient3D& ing)
     p.active = true;
     p.falling = true;
 
-       // units per second
+    // units per second
 }
 
 static glm::mat4 MakeTRS(const glm::vec3& pos, const glm::vec3& rotDegXYZ, const glm::vec3& scale)
@@ -409,144 +451,148 @@ static glm::mat4 MakeTRS(const glm::vec3& pos, const glm::vec3& rotDegXYZ, const
 }
 
 void AssembleState3D::updatePuddles() {
-  bool placedSomething = false;
+    bool placedSomething = false;
 
-        for (int i = 0; i < puddleCount; ++i) {
-            Puddle3D& p = puddles[i];
-            if (!p.active || !p.falling) continue;
+    for (int i = 0; i < puddleCount; ++i) {
+        Puddle3D& p = puddles[i];
+        if (!p.active || !p.falling) continue;
 
-            const float prevY = p.mPos.y;
-            const float newY = p.mPos.y - 0.02 ;
+        const float prevY = p.mPos.y;
+        const float newY = p.mPos.y - 0.02;
 
-            const float prevBottom = prevY - 0.01;
-            const float currBottom = newY - 0.01;
+        const float prevBottom = prevY - 0.01;
+        const float currBottom = newY - 0.01;
 
-            bool foundSupport = false;
-            bool landedOnPlateOrIngredient = false;
+        bool foundSupport = false;
+        bool landedOnPlateOrIngredient = false;
 
-            // helper: 2D overlap in XZ between puddle footprint and support rectangle
-            auto overlapPuddleWithRectXZ = [&](float left, float right, float back, float front) -> bool {
-                const float px0 = p.mPos.x - 0.05;
-                const float px1 = p.mPos.x + 0.05;
-                const float pz0 = p.mPos.z - 0.05;
-                const float pz1 = p.mPos.z + 0.05;
+        // helper: 2D overlap in XZ between puddle footprint and support rectangle
+        auto overlapPuddleWithRectXZ = [&](float left, float right, float back, float front) -> bool {
+            const float px0 = p.mPos.x - 0.05;
+            const float px1 = p.mPos.x + 0.05;
+            const float pz0 = p.mPos.z - 0.05;
+            const float pz1 = p.mPos.z + 0.05;
 
-                const bool xOverlap = (px1 >= left) && (px0 <= right);
-                const bool zOverlap = (pz1 >= back) && (pz0 <= front);
-                return xOverlap && zOverlap;
-            };
+            const bool xOverlap = (px1 >= left) && (px0 <= right);
+            const bool zOverlap = (pz1 >= back) && (pz0 <= front);
+            return xOverlap && zOverlap;
+        };
 
-            // helper: check crossing a horizontal plane "topY" from above with XZ overlap
-            auto trySupportPlane = [&](float left, float right, float back, float front, float topY) {
-                if (foundSupport) return;
+        // helper: check crossing a horizontal plane "topY" from above with XZ overlap
+        auto trySupportPlane = [&](float left, float right, float back, float front, float topY) {
+            if (foundSupport) return;
 
-                const bool overlapped = overlapPuddleWithRectXZ(left, right, back, front);
-                const bool crossedFromAbove = (prevBottom > topY && currBottom <= topY);
+            const bool overlapped = overlapPuddleWithRectXZ(left, right, back, front);
+            const bool crossedFromAbove = (prevBottom > topY && currBottom <= topY);
+#if defined(DEBUG_ASSEMBLE_LOGS)
+#if defined(DEBUG_ASSEMBLE_LOGS)
 
-                std::cout << overlapped << crossedFromAbove;
+            std::cout << overlapped << crossedFromAbove;
 
-                if (overlapped && crossedFromAbove) {
-                    foundSupport = true;
+#endif
+#endif
+            if (overlapped && crossedFromAbove) {
+                foundSupport = true;
 
-                    // snap puddle to sit on top
-                    p.mPos.y = topY + 0.01;
+                // snap puddle to sit on top
+                p.mPos.y = topY + 0.01;
+            }
+        };
+
+        // 1) Table surface support (always counts as support, but doesn't mark "placedSomething")
+        trySupportPlane(-0.6, 0.6,
+            -0.3, 0.3,
+            0.6);
+
+        // 2) Plate support (if not already supported by table)
+        if (!foundSupport) {
+            const float plateLeft = mPlatePos.x - 0.08;
+            const float plateRight = mPlatePos.x + 0.08;
+            const float plateBack = mPlatePos.z - 0.08;
+            const float plateFront = mPlatePos.z + 0.08;
+
+            trySupportPlane(plateLeft, plateRight, plateBack, plateFront, mPlatePos.y);
+
+            if (foundSupport) {
+                placedSomething = true;
+                landedOnPlateOrIngredient = true;
+            }
+        }
+
+        // 3) Ingredient supports (if not already supported)
+        if (!foundSupport) {
+            for (int k = 0; k < ctx.NUM_INGREDIENTS; ++k) {
+                const Ingredient3D& base = ingredients[k];
+                if (!base.placed) continue;
+
+                // shrink footprint like your 2D (0.6)
+
+                const float left = base.mPos.x - 0.2;
+                const float right = base.mPos.x + 0.2;
+                const float back = base.mPos.z - 0.2;
+                const float front = base.mPos.z + 0.2;
+
+                float topY = base.mPos.y;
+                if (base.type == IngredientType::Puddle) {
+                    topY = base.mPos.y;
                 }
-            };
-
-            // 1) Table surface support (always counts as support, but doesn't mark "placedSomething")
-            trySupportPlane(-0.6, 0.6,
-                -0.3, 0.3,
-                0.6);
-
-            // 2) Plate support (if not already supported by table)
-            if (!foundSupport) {
-                const float plateLeft = mPlatePos.x - 0.08;
-                const float plateRight = mPlatePos.x + 0.08;
-                const float plateBack = mPlatePos.z - 0.08;
-                const float plateFront = mPlatePos.z + 0.08;
-
-                trySupportPlane(plateLeft, plateRight, plateBack, plateFront, mPlatePos.y);
+                else {
+                    topY = base.mPos.y + 0.07; // top surface of ingredient
+                }
+                trySupportPlane(left, right, back, front, topY);
 
                 if (foundSupport) {
                     placedSomething = true;
                     landedOnPlateOrIngredient = true;
+                    break;
                 }
-            }
-
-            // 3) Ingredient supports (if not already supported)
-            if (!foundSupport) {
-                for (int k = 0; k < ctx.NUM_INGREDIENTS; ++k) {
-                    const Ingredient3D& base = ingredients[k];
-                    if (!base.placed) continue;
-
-                    // shrink footprint like your 2D (0.6)
-
-                    const float left = base.mPos.x - 0.2;
-                    const float right = base.mPos.x + 0.2;
-                    const float back = base.mPos.z - 0.2;
-                    const float front = base.mPos.z + 0.2;
-
-                    float topY = base.mPos.y;
-                    if (base.type == IngredientType::Puddle) {
-                         topY = base.mPos.y;
-                    }
-                    else {
-                        topY = base.mPos.y + 0.07; // top surface of ingredient
-                    }
-                    trySupportPlane(left, right, back, front, topY);
-
-                    if (foundSupport) {
-                        placedSomething = true;
-                        landedOnPlateOrIngredient = true;
-                        break;
-                    }
-                }
-            }
-
-            if (foundSupport) {
-                p.falling = false;
-
-                // Equivalent to your logic: when it lands on plate/ingredient,
-                // convert it into an "ingredient slot" and advance current ingredient.
-                if (landedOnPlateOrIngredient) {
-
-                    // Choose where to store puddles (your original uses [2] and [3])
-                    const bool ketchupFirstSlotFree = !ingredients[2].placed; // same as your condition
-
-                    if (ketchupFirstSlotFree) {
-                        // Put ketchup puddle in slot 2
-                        ingredients[2].type = IngredientType::Puddle;
-                        ingredients[2].mPos = p.mPos;
-                        ingredients[2].mScale = glm::vec3(0.1);
-                        ingredients[2].placed = true;
-                        ingredients[2].active = false;
-                        ingredients[2].model = ketchupPuddle;
-                    }
-                    else {
-                        // Put mustard puddle in slot 3
-                        ingredients[3].type = IngredientType::Puddle;
-                        ingredients[3].mPos = p.mPos;
-                        ingredients[3].mScale = glm::vec3(0.1);
-                        ingredients[3].placed = true;
-                        ingredients[3].active = false;
-                        ingredients[3].model = mustardPuddle;
-                    }
-
-                    currentIg++;
-                    if (currentIg < 10) {
-                        ingredients[currentIg].active = true;
-                    }
-
-                    p.active = false;
-                }
-
-            }
-            else {
-                // keep falling
-                p.mPos.y = newY;
             }
         }
-    
+
+        if (foundSupport) {
+            p.falling = false;
+
+            // Equivalent to your logic: when it lands on plate/ingredient,
+            // convert it into an "ingredient slot" and advance current ingredient.
+            if (landedOnPlateOrIngredient) {
+
+                // Choose where to store puddles (your original uses [2] and [3])
+                const bool ketchupFirstSlotFree = !ingredients[2].placed; // same as your condition
+
+                if (ketchupFirstSlotFree) {
+                    // Put ketchup puddle in slot 2
+                    ingredients[2].type = IngredientType::Puddle;
+                    ingredients[2].mPos = p.mPos;
+                    ingredients[2].mScale = glm::vec3(0.1);
+                    ingredients[2].placed = true;
+                    ingredients[2].active = false;
+                    ingredients[2].model = ketchupPuddle;
+                }
+                else {
+                    // Put mustard puddle in slot 3
+                    ingredients[3].type = IngredientType::Puddle;
+                    ingredients[3].mPos = p.mPos;
+                    ingredients[3].mScale = glm::vec3(0.1);
+                    ingredients[3].placed = true;
+                    ingredients[3].active = false;
+                    ingredients[3].model = mustardPuddle;
+                }
+
+                currentIg++;
+                if (currentIg < 10) {
+                    ingredients[currentIg].active = true;
+                }
+
+                p.active = false;
+            }
+
+        }
+        else {
+            // keep falling
+            p.mPos.y = newY;
+        }
+    }
+
 
 }
 
@@ -568,6 +614,19 @@ void AssembleState3D::render()
     mShader3D.setVec3("lightPos", mLightPos);
     mShader3D.setVec3("viewPos", mCamPos);
 
+    mShader3D.setFloat("uLightIntensity", lightOn ? 1.0f : 0.0f);
+
+    if (ctx.gDepthTestOn) glEnable(GL_DEPTH_TEST);
+    else              glDisable(GL_DEPTH_TEST);
+
+    if (ctx.gCullOn) {
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+    }
+    else {
+        glDisable(GL_CULL_FACE);
+    }
+
     // -----------------------------
     // Draw room (floor + ceiling + 4 walls)
     // Quad is centered at origin, XZ plane, scaled to room size and then rotated/translated.
@@ -586,7 +645,6 @@ void AssembleState3D::render()
 
         glBindVertexArray(roomVAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);
-        glBindVertexArray(0);
     };
 
     const float H = mRoomHeight;
@@ -643,7 +701,7 @@ void AssembleState3D::render()
     // ---- draw plate (on top of table) ----
     {
         // Keep plate position updated (in case you tweak mTableTopY live)
-        mPlatePos = glm::vec3(mTablePos.x, mTableTopY-0.28 , mTablePos.z);
+        mPlatePos = glm::vec3(mTablePos.x, mTableTopY - 0.28, mTablePos.z);
 
         glm::mat4 M = makeModelMatrix(mPlatePos, mPlateScale);
         mShader3D.setMat4("model", M);
@@ -653,8 +711,7 @@ void AssembleState3D::render()
     //ingredients
 
     for (int i = 0; i < ctx.NUM_INGREDIENTS; ++i) {
-        glBindVertexArray(ctx.VAOpatty);
-         Ingredient3D ing = ingredients[i];
+        Ingredient3D& ing = ingredients[i];
 
         if (!ing.placed && !ing.active)
             continue;
@@ -670,7 +727,7 @@ void AssembleState3D::render()
 
     for (int i = 0; i < puddleCount; ++i) {
 
-         Puddle3D& p = puddles[i];
+        Puddle3D& p = puddles[i];
 
         if (!p.active)continue;
 
@@ -679,7 +736,19 @@ void AssembleState3D::render()
             mShader3D.setMat4("model", M);
             p.model.Draw(mShader3D);
         }
-       
+
+    }
+
+
+    // Cache rectShader uniform locations (avoid glGetUniformLocation every frame)
+    static bool sRectCached = false;
+    static GLint r_uCookProgress = -1, r_uX = -1, r_uY = -1, r_uS = -1;
+    if (!sRectCached) {
+        r_uCookProgress = glGetUniformLocation(ctx.rectShader, "uCookProgress");
+        r_uX = glGetUniformLocation(ctx.rectShader, "uX");
+        r_uY = glGetUniformLocation(ctx.rectShader, "uY");
+        r_uS = glGetUniformLocation(ctx.rectShader, "uS");
+        sRectCached = true;
     }
 
     if (currentIg >= ctx.NUM_INGREDIENTS) {
@@ -691,10 +760,10 @@ void AssembleState3D::render()
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, prijatnoTex);
 
-        glUniform1f(glGetUniformLocation(ctx.rectShader, "uCookProgress"), 0);
-        glUniform1f(glGetUniformLocation(ctx.rectShader, "uX"), 0.0);
-        glUniform1f(glGetUniformLocation(ctx.rectShader, "uY"), 0.6);
-        glUniform1f(glGetUniformLocation(ctx.rectShader, "uS"), 4.0f);
+        glUniform1f(r_uCookProgress, 0.0f);
+        glUniform1f(r_uX, 0.0f);
+        glUniform1f(r_uY, 0.6f);
+        glUniform1f(r_uS, 4.0f);
 
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     }

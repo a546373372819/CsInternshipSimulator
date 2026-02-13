@@ -89,6 +89,18 @@ CookingState3D::CookingState3D(GameContext& ctx, StateManager& manager)
         -1, 0,  1,          0, 1, 0,         0, t,
     };
 
+    static float roomQuadCW[] = {
+        // same vertices but triangle order reversed
+        // tri1: v0 v2 v1, tri2: v0 v3 v2
+        -1, 0, -1,  0, 1, 0,  0, 0,
+         1, 0,  1,  0, 1, 0,  t, t,
+         1, 0, -1,  0, 1, 0,  t, 0,
+
+        -1, 0, -1,  0, 1, 0,  0, 0,
+        -1, 0,  1,  0, 1, 0,  0, t,
+         1, 0,  1,  0, 1, 0,  t, t,
+    };
+
     glGenVertexArrays(1, &roomVAO);
     glGenBuffers(1, &roomVBO);
 
@@ -159,6 +171,7 @@ void CookingState3D::update(GLFWwindow* window, float dt)
         return;
     }
 
+
     glm::vec3 prevPos = mPattyPos;
 
     // Movement
@@ -176,6 +189,16 @@ void CookingState3D::update(GLFWwindow* window, float dt)
     mPattyPos += dir * (mMoveSpeed * dt);
 
     clampPattyToTable();
+
+    static bool zWasDown = false;
+    bool zDown = glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS;
+    if (zDown && !zWasDown) ctx.gDepthTestOn = !ctx.gDepthTestOn;
+    zWasDown = zDown;
+
+    static bool cWasDown = false;
+    bool cDown = glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS;
+    if (cDown && !cWasDown) ctx.gCullOn = !ctx.gCullOn;
+    cWasDown = cDown;
 
     // Stove collision + snap
     // Stove collision + snap
@@ -272,6 +295,14 @@ void CookingState3D::update(GLFWwindow* window, float dt)
     mCamTarget = mCamPos + mCamFront;
 
     //bar 
+    static bool lWasDown = false;
+    bool lDown = (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS);
+
+    if (lDown && !lWasDown) {
+        lightOn = !lightOn;
+    }
+
+    lWasDown = lDown;
 
    
 
@@ -288,12 +319,15 @@ void CookingState3D::render()
 
     glm::mat4 projection = glm::perspective(glm::radians(60.0f), float(w) / float(h), 0.1f, 100.0f);
     glm::mat4 view = glm::lookAt(mCamPos, mCamTarget, glm::vec3(0, 1, 0));
-
     mShader3D.use();
     mShader3D.setMat4("view", view);
     mShader3D.setMat4("projection", projection);
     mShader3D.setVec3("lightPos", mLightPos);
     mShader3D.setVec3("viewPos", mCamPos);
+
+    mShader3D.setFloat("uLightIntensity", lightOn ? 1.0f : 0.0f);
+
+    
 
     // -----------------------------
     // Draw room (floor + ceiling + 4 walls)
@@ -319,7 +353,16 @@ void CookingState3D::render()
     const float H = mRoomHeight;
     const float E = mRoomHalfExtent;
 
+    if (ctx.gDepthTestOn) glEnable(GL_DEPTH_TEST);
+    else              glDisable(GL_DEPTH_TEST);
 
+    if (ctx.gCullOn) {
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+    }
+    else {
+        glDisable(GL_CULL_FACE);
+    }
 
     // Floor (XZ)
     drawQuadFace(
@@ -356,6 +399,8 @@ void CookingState3D::render()
         wallTex,
         MakeTRS(glm::vec3(+E, H * 0.5f, 0), glm::vec3(90, 0, 90), glm::vec3(E, 1.0f, H))
     );
+
+    
 
 
     // -----------------------------

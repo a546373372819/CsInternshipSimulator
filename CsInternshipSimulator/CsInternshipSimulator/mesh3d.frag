@@ -19,6 +19,8 @@ uniform vec3  uKd;   // from MTL Kd
 uniform vec3  uKs;   // from MTL Ks
 uniform float uNs;   // from MTL Ns
 
+uniform float uLightIntensity;
+
 uniform float uCookProgress;
 
 vec3 applyCooking(vec3 raw, float t)
@@ -53,5 +55,5 @@ void main()
     vec3 diffuse  = 0.75 * diff * base;
     vec3 specular = 2 * spec * specColor;
 
-    FragColor = vec4(ambient + diffuse + specular, 1.0);
+    FragColor = vec4(ambient + diffuse + specular, 1.0)*uLightIntensity;
 }

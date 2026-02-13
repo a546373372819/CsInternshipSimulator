@@ -16,4 +16,7 @@ public:
     int screenHeight = 800;
     int NUM_INGREDIENTS = 10;
 
+    bool gDepthTestOn = true;
+    bool gCullOn = false;
+
 };

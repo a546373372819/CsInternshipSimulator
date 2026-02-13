@@ -30,6 +30,9 @@ private:
     Model  mStove;
     Model  mPatty;
 
+    bool lightOn = true;
+
+
     // Transforms / positions
     glm::vec3 mStovePos = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::vec3 mPattyPos = glm::vec3(0.0f, 1.2f, 0.0f);

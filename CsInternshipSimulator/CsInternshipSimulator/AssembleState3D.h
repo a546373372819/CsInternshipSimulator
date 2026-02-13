@@ -46,6 +46,8 @@ public:
 
     int puddleCount = 0;
 
+    bool lightOn = true;
+
 private:
     // --- shader / lighting ---
     Shader mShader3D;
@@ -104,7 +106,7 @@ private:
 
     //room
 
-    float ingredientHalfWidth = 0.25f;
+    float ingredientHalfWidth = 0.1f;
     float ingredientHalfHeight = 0.07f;
     float ingredientSpeed = 0.02f;
 
