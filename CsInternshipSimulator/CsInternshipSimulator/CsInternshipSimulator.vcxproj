@@ -138,6 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssembleState.h" />
+    <ClInclude Include="AssembleState3D.h" />
     <ClInclude Include="CookingState.h" />
     <ClInclude Include="CookingState3D.h" />
     <ClInclude Include="GameContext.h" />
@@ -154,6 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssebleState.cpp" />
+    <ClCompile Include="AssembleState3D.cpp" />
     <ClCompile Include="CookingState.cpp" />
     <ClCompile Include="CookingState3D.cpp" />
     <ClCompile Include="Main.cpp" />

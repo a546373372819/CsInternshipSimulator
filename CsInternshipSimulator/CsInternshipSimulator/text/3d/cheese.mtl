@@ -2,13 +2,8 @@
 # www.blender.org
 
 newmtl fromage_(matériau)
-Ka 1.000000 1.000000 1.000000
-Kd 0.800000 0.800000 0.800000
-Ks 1.000000 1.000000 1.000000
-Ke 0.000000 0.000000 0.000000
-Ni 1.450000
-d 1.000000
+Ka 0.0 0.0 0.0
+Kd 1.0 1.0 0.0
+Ks 0.02 0.02 0.02
+Ns 32
 illum 2
-map_Ns Matériau_Roughness.png
-map_refl Matériau_Metallic.png
-map_Bump -bm 1.000000 Matériau_Normal_OpenGL.png

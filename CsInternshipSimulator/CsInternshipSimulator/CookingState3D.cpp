@@ -43,7 +43,7 @@ CookingState3D::CookingState3D(GameContext& ctx, StateManager& manager)
     // Camera + light (tweak freely)
     mCamPos = glm::vec3(-0.5f, 1.5f, 0.5f);
     mCamTarget = glm::vec3(-0.5f, 1.5f, -1.0f);
-    mLightPos = glm::vec3(0.0f, 3.2f, 2.0f);
+    mLightPos = glm::vec3(-0.5f, 1.5f, 0.5f);
 
     // Stove placement (tweak freely)
     mStovePos = glm::vec3(0.0f, 0.0f, -2.5f);

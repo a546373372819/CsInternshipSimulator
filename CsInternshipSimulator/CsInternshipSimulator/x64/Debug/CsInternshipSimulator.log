@@ -1,8 +1,68 @@
-﻿  CookingState3D.cpp
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.22000.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
-C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\packages\glfw.3.4.0\build\native\include\GLFW\glfw3.h(123,1): message : see previous definition of 'APIENTRY'
-C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\GameState.h(6,19): warning C4099: 'GameContext': type name first seen using 'class' now seen using 'struct'
-C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\CookingState3D.h(8,7): message : see declaration of 'GameContext'
-C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\GameContext.h(4,1): warning C4099: 'GameContext': type name first seen using 'class' now seen using 'struct'
-C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\GameContext.h(3,8): message : see declaration of 'GameContext'
+﻿  AssembleState3D.cpp
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.h(13,18): warning C4099: 'GameContext': type name first seen using 'struct' now seen using 'class'
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\GameState.h(6,8): message : see declaration of 'GameContext'
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(231,44): warning C4305: '=': truncation from 'double' to 'T'
+          with
+          [
+              T=float
+          ]
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(251,28): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(251,22): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(267,23): warning C4305: 'argument': truncation from 'double' to 'T'
+          with
+          [
+              T=float
+          ]
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(267,24): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(324,50): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(337,36): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(340,36): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(419,41): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(419,30): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(421,44): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(421,36): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(422,43): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(422,36): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(429,44): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(429,33): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(430,44): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(430,33): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(431,44): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(431,33): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(432,44): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(432,33): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(452,37): warning C4244: '=': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(459,20): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(463,53): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(463,39): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(464,54): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(464,40): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(465,53): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(465,39): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(466,54): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(466,40): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(484,52): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(484,38): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(485,53): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(485,39): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(486,52): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(486,38): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(487,53): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(487,39): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(494,44): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(520,62): warning C4305: 'argument': truncation from 'double' to 'T'
+          with
+          [
+              T=float
+          ]
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(529,62): warning C4305: 'argument': truncation from 'double' to 'T'
+          with
+          [
+              T=float
+          ]
+C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\CsInternshipSimulator\AssembleState3D.cpp(696,68): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
   CsInternshipSimulator.vcxproj -> C:\Users\Kita\Documents\GitHub\bla\CsInternshipSimulator\CsInternshipSimulator\x64\Debug\CsInternshipSimulator.exe

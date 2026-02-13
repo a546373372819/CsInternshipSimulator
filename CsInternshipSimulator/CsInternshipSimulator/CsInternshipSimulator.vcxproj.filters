@@ -78,6 +78,9 @@
     <ClInclude Include="CookingState3D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AssembleState3D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -99,6 +102,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CookingState3D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AssembleState3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

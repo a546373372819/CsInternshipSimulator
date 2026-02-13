@@ -4,6 +4,7 @@
 #include "CookingState3D.h"
 #include "AssembleState.h"
 #include <iostream>
+#include "AssembleState3D.h"
 
 StateManager::StateManager(GameContext& c)
     : ctx(c), currentId(StateID::Menu)
@@ -27,7 +28,7 @@ void StateManager::changeState(StateID id)
         current = std::make_unique<CookingState3D>(ctx, *this);
         break;
     case StateID::Assembling:
-        current = std::make_unique<AssembleState>(ctx, *this);
+        current = std::make_unique<AssembleState3D>(ctx, *this);
         break;
     }
 }

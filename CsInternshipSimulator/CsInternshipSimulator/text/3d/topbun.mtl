@@ -2,13 +2,10 @@
 # www.blender.org
 
 newmtl pain_(matériau_001)
-Ka 1.000000 1.000000 1.000000
-Ks 1.000000 1.000000 1.000000
-Ke 0.000000 0.000000 0.000000
-Ni 1.450000
-d 1.000000
+Ka 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
+Ks 0.02 0.02 0.02
+Ns 32
 illum 2
 map_Kd patty3d.png
-map_Ns Matériau.001_Roughness.png
-map_refl Matériau.001_Metallic.png
-map_Bump -bm 1.000000 Matériau.001_Normal_OpenGL.png
+
