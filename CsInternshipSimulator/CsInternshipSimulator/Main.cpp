@@ -322,7 +322,7 @@ int main() {
         double frameTime = frameEnd - now;
         if (frameTime < TARGET_FRAME_TIME) {
             while (glfwGetTime() - now < TARGET_FRAME_TIME) {
-                // busy wait; could use sleep_for if želiš
+                // busy wait; could use sleep_for 
             }
         }
     }

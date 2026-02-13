@@ -28,23 +28,19 @@ AssembleState3D::AssembleState3D(GameContext& ctx, StateManager& manager)
     , cheese("text/3d/cheese.obj")
 {
 
-    mRoomHalfExtent = 6.0f;     // room extends [-6..6] in X and Z
+    mRoomHalfExtent = 6.0f;     // room extends 
     mRoomHeight = 4.0f;     // y=0 floor, y=4 ceiling
     mRoomUVTiling = 6.0f;     // how many times textures repeat on each face
 
-    // Camera + light (tweak freely)
+    // Camera + light 
     mCamPos = glm::vec3(0.0345848f, 1.05756f, 1.18858);
     mCamTarget = glm::vec3(0.028343f, 0.941237f, 0.19539);
     mLightPos = glm::vec3(-0.5f, 1.5f, 0.5f);
 
-    // Stove placement (tweak freely)
 
 
-    // -----------------------------------------
-    // Room geometry: one quad on XZ plane (y=0)
-    // We'll rotate/translate it to make floor/walls/ceiling.
-    // IMPORTANT: it includes UVs at location 2.
-    // -----------------------------------------
+    // Room geometry: one quad on XZ plane
+
     const float t = mRoomUVTiling; // uv tiling amount
 
     static float roomQuad[] = {
@@ -80,8 +76,6 @@ AssembleState3D::AssembleState3D(GameContext& ctx, StateManager& manager)
     glBindVertexArray(0);
 
     // -----------------------------
-    // Load textures for the room
-    // -----------------------------
     prijatnoTex = loadImageToTexture("text/prijatno.png");
     wallTex = loadImageToTexture("text/walls.png");
     floorTex = loadImageToTexture("text/floor.png");
@@ -94,7 +88,6 @@ AssembleState3D::AssembleState3D(GameContext& ctx, StateManager& manager)
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // Make sure the shader uses texture unit 0 for room + models by default.
     mShader3D.use();
     mShader3D.setInt("uDiffMap1", 0);
 
@@ -167,7 +160,6 @@ void AssembleState3D::update(GLFWwindow* window, float dt)
         mYaw += float(xoffset) * mMouseSensitivity;
         mPitch += float(yoffset) * mMouseSensitivity;
 
-        // no std::clamp:
         if (mPitch > 89.0f)  mPitch = 89.0f;
         if (mPitch < -89.0f) mPitch = -89.0f;
 
@@ -264,7 +256,6 @@ void AssembleState3D::moveCurrentIngredient3D(GLFWwindow* window, float dt)
         (ing.type == IngredientType::Ketchup || ing.type == IngredientType::Mustard);
 
     // ---- movement (WASD moves on table in XZ) ----
-    // (If you want arrow keys for camera, keep them separate.)
     glm::vec3 prevPos = ing.mPos;
     glm::vec3 newPos = ing.mPos;
 
@@ -275,8 +266,6 @@ void AssembleState3D::moveCurrentIngredient3D(GLFWwindow* window, float dt)
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) newPos.x -= move;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) newPos.x += move;
 
-    // Optional: let player 'drop' with Q/E or R/F
-    // (You need some way to move down to trigger placement.)
     if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) newPos.y -= move; // down
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) newPos.y += move; // up
 
@@ -286,8 +275,7 @@ void AssembleState3D::moveCurrentIngredient3D(GLFWwindow* window, float dt)
         -0.3, 0.3,
         glm::vec3(0.05));
 
-    // Optionally keep it hovering slightly above table while moving:
-    // newPos.y = std::max(newPos.y, ctx.tableY + ing.half.y + 0.01f);
+
 
     ing.mPos = newPos;
 
@@ -304,7 +292,7 @@ void AssembleState3D::moveCurrentIngredient3D(GLFWwindow* window, float dt)
 #endif
 #endif
 #endif
-            spawnPuddleFor3D(ing); // implement: use ing.pos.xz, plate plane Y
+            spawnPuddleFor3D(ing); 
         }
         spaceWasDown = spaceDown;
         return;
@@ -345,8 +333,7 @@ void AssembleState3D::moveCurrentIngredient3D(GLFWwindow* window, float dt)
     };
 
     // ---- plate support ----
-    // Plate is a flat support region:
-    // ctx.plateCenter, ctx.plateHalf (XZ extents), ctx.plateTopY
+
     trySupportPlane(mPlatePos, 0.08f, mPlatePos.y - 0.07, 0.75f);
 #if defined(DEBUG_ASSEMBLE_LOGS)
 #if defined(DEBUG_ASSEMBLE_LOGS)
@@ -499,12 +486,12 @@ void AssembleState3D::updatePuddles() {
             }
         };
 
-        // 1) Table surface support (always counts as support, but doesn't mark "placedSomething")
+        //  Table surface support (always counts as support, but doesn't mark "placedSomething")
         trySupportPlane(-0.6, 0.6,
             -0.3, 0.3,
             0.6);
 
-        // 2) Plate support (if not already supported by table)
+        // Plate support (if not already supported by table)
         if (!foundSupport) {
             const float plateLeft = mPlatePos.x - 0.08;
             const float plateRight = mPlatePos.x + 0.08;
@@ -519,7 +506,7 @@ void AssembleState3D::updatePuddles() {
             }
         }
 
-        // 3) Ingredient supports (if not already supported)
+        //  Ingredient supports (if not already supported)
         if (!foundSupport) {
             for (int k = 0; k < ctx.NUM_INGREDIENTS; ++k) {
                 const Ingredient3D& base = ingredients[k];
@@ -552,8 +539,7 @@ void AssembleState3D::updatePuddles() {
         if (foundSupport) {
             p.falling = false;
 
-            // Equivalent to your logic: when it lands on plate/ingredient,
-            // convert it into an "ingredient slot" and advance current ingredient.
+
             if (landedOnPlateOrIngredient) {
 
                 // Choose where to store puddles (your original uses [2] and [3])
@@ -621,16 +607,15 @@ void AssembleState3D::render()
 
     if (ctx.gCullOn) {
         glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
+        glCullFace(GL_FRONT);
     }
     else {
         glDisable(GL_CULL_FACE);
     }
 
-    // -----------------------------
     // Draw room (floor + ceiling + 4 walls)
     // Quad is centered at origin, XZ plane, scaled to room size and then rotated/translated.
-    // -----------------------------
+
 
 
     auto drawQuadFace = [&](GLuint tex, const glm::mat4& model) {
@@ -690,6 +675,11 @@ void AssembleState3D::render()
 
     // Ensure assemble scene doesn't apply "cooking" tint
     mShader3D.setFloat("uCookProgress", 0.0f);
+
+    if (ctx.gCullOn) {
+        glCullFace(GL_BACK);
+    }
+    
 
     // ---- draw table ----
     {

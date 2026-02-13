@@ -358,7 +358,7 @@ void CookingState3D::render()
 
     if (ctx.gCullOn) {
         glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
+        glCullFace(GL_FRONT);
     }
     else {
         glDisable(GL_CULL_FACE);
@@ -400,12 +400,12 @@ void CookingState3D::render()
         MakeTRS(glm::vec3(+E, H * 0.5f, 0), glm::vec3(90, 0, 90), glm::vec3(E, 1.0f, H))
     );
 
-    
+    if (ctx.gCullOn) {
+        glCullFace(GL_BACK);
+    }
 
 
-    // -----------------------------
     // Draw stove
-    // -----------------------------
     {
         glm::mat4 M = makeModelMatrix(mStovePos, mStoveScale);
         mShader3D.setMat4("model", M);
@@ -413,9 +413,7 @@ void CookingState3D::render()
         mStove.Draw(mShader3D);
     }
 
-    // -----------------------------
     // Draw patty (with browning)
-    // -----------------------------
     {
         mShader3D.setBool("uHasDiffuseMap", false);
 
@@ -428,7 +426,6 @@ void CookingState3D::render()
         mPatty.Draw(mShader3D);
     }
 
-    // Optional overlays (2D) go here after 3D
      //  loading bar 
     glUseProgram(ctx.barShader);
     glBindVertexArray(ctx.VAObar);
